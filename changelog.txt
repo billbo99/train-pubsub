@@ -1,0 +1,985 @@
+---------------------------------------------------------------------------------------------------
+Version: 1.1.7
+Date: 2021/11/16
+  Bugfixes:
+    - Fixes opening and closing locomotive GUI before researching TSM
+
+---------------------------------------------------------------------------------------------------
+Version: 1.1.6
+Date: 2021/11/06
+  Bugfixes:
+    - Fixes rare issue where the train counter could register an incorrect value after manual
+      changes to the incoming train schedule
+    - Fixes issue at a multi-requester station where trains fail to be called (due to an error
+      in database flag management)
+
+---------------------------------------------------------------------------------------------------
+Version: 1.1.5
+Date: 2021/08/29
+  Bugfixes:
+    - Fixes issue with editing wait conditions with values
+
+---------------------------------------------------------------------------------------------------
+Version: 1.1.4
+Date: 2020/12/22
+  Features::
+    - When directly opening a requester, the TSM graphics are now linked to the lamp GUI
+    - There is now a copy button on the requester lamp, this will copy the icon from the resource
+      icon to the id icon (ie copies from left to right)
+    - The filter on the outstanding requests tab no longer clears when there is an auto update
+      of the outstanding request data
+
+---------------------------------------------------------------------------------------------------
+Version: 1.1.3
+Date: 2020/12/15
+  Bugfixes:
+    - Fixes fluid handling unwanted text output
+
+---------------------------------------------------------------------------------------------------
+Version: 1.1.2
+Date: 2020/12/15
+  Bugfixes:
+    - Fixes fluid handling wait condition
+
+---------------------------------------------------------------------------------------------------
+Version: 1.1.1
+Date: 2020/12/14
+  Bugfixes:
+    - Fixes crash on editing priorities
+
+---------------------------------------------------------------------------------------------------
+Version: 1.1.0
+Date: 2020/12/13
+  Features:
+    - Version 1.1 compatibility
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.8
+Date: 2020/12/12
+  Features:
+    - Unsatisfied demand from direct circuit connections now included in the outstanding
+      request table.
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.7
+Date: 2020/10/21
+  Bugfixes:
+    - Fixed crash from "Error while running event train-pubsub::script_raised_built (ID 77)
+      LuaEntity API call when LuaEntity was invalid."
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.6
+Date: 2020/10/18
+  Features:
+    - There is now a TSM shortcut item that gives access to admin only GUI based
+      copy priorities.  You can copy the priorities of a surface to another surface,
+      or export to a text file and import that into a new save.  The import requires
+      the actual text content not the file name.
+  Bugfixes:
+    - Before first priority creation, if you passed a signal (ie direct connection)
+      to a requester station, this would cause a crash.  Now fixed.
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.5
+Date: 2020/09/28
+  Features:
+    - You can now specify a threshold in minutes on the Outstanding Requests Table.
+      You set this in player mod settings - everything waiting for less than the
+      indicated time is excluded.
+    - Minor perforamce improvement mainly through implementing event filters
+  Bugfixes:
+    - Fixes rare crash caused by legacy table global.priorities
+    - Autocorrects data where the train counter link to the requester station is broken
+      due to entity unit_number changing for any reason
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.4
+Date: 2020/09/06
+  Bugfixes:
+    - Fixes "Unknown key:"controls.remove-ping-map" error
+    - Fixes possible error when blueprinting stations with full BP mode disabled,
+      and renaming stations.  This could have resulted in the train sent to a
+      non-existent station.
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.3
+Date: 2020/09/03
+  Bugfixes:
+    - Fixes crash caused by using BPs wit TSM objects and editing the BP.
+      "/bp.lua:44: attempt to index global 'player' (a nil value)"
+      Note requester custom settings will be lost if entities removed from
+      the BP (factorio issue).
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.2
+Date: 2020/09/02
+  Bugfixes:
+    - Fixes crash caused by using BPs wit TSM objects and editing the BP.  Note requester
+      custom settings will be lost if entities removed from the BP (factorio issue).
+  Features:
+    - API add_interface command will now return empty table rather than nil if no validated
+      table entries exist for the surface.
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.1
+Date: 2020/08/21
+  Bugfixes:
+    - Fixes issue caused by renaming a requester station to the same as an existing requester
+      station
+
+---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date: 2020/08/16
+  Bugfixes:
+    - Fixes blueprint issue with delayed building of requester station (use tsm_reset)
+      to clear pre-existing issue (trains not being called)
+  Features:
+    - Map ping function now uses GPS ping (like player cltr-alt-click on map)
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.26
+Date: 2020/08/14
+  Bugfixes:
+    - Fixes crash from modifying blueprint placed in inventory
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.25
+Date: 2020/08/13
+  Bugfixes:
+    - Corrected potential crash on bp copy :bp.lua:3: attempt to index field 'player'
+      (a nil value)"
+  Features:
+    - Wait conditions can now be edited directly when setting up new priority
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.24
+Date: 2020/08/13
+  Bugfixes:
+    - Corrected minor issue on api command "update_wc" when setting rb_and
+  Features:
+    - Added full blueprint support.  To use you must enable via mod settings, map tab,
+      "Full blueorint mode".  In addition you must confirm the blueprint ie use the
+      blueprint item, not the copy tool or the cut tool.  Also, this does not automatically
+      work with old blueprints, only new ones.  The effect is that requester (lamps) will
+      be built with the full details priority schema, hide flag, requester priority set per
+      original in addition to everything else in the blueprint.  You can turn this on and
+      off for all blueprints voa the mod settings map feature at any time.
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.23
+Date: 2020/08/06
+  Bugfixes:
+    - Corrected crash on placement of requester stop without first defining a priority
+      ie now either order is fine
+  Features:
+    - New remote enabled functions interface "TSM-API" provided
+    - remote.call("TSM-API","list_priorities","surface") - returns table of priorities,
+      surface is optional to limit output to single surface, and requires surface.nAme
+      eg "nauvis"
+    - remote.call("TSM-API", "define_new_priority","icon1", "icon2", "stationlist", "surface")
+      creates a new priority schema - icon1 and icon2 are mandatory, stationlist is an array
+      of station names, surface is surface name, defaults to "nauvis"
+    - remote.call("TSM-API", "update_wc","icon1", "icon2", "wc", "surface") updates the wait
+      conditions of an existing priority.  wc is an array (only items that you are changing
+      are required).  The following are legal and set to the defaults -
+      {rb_or = true, rb_and = false, inc_ef = true, empty = true, full = false, inactivity = true,
+      inact_int = 5, wait_timer = false, wait_int = 30, count = false, count_amt = 1000,
+      count_ddn = 1}.  surface is optional default "nauvis"
+    - remote.call("TSM-API", "append_station", "icon1", "icon2", "stationlist", "surface")
+      appends stations to the specified priority.  Stationlist is an array. Surface optional
+    - remote.call("TSM-API", "prepend_station", "icon1", "icon2", "stationlist", "surface")
+      inserts stations at the beginning of the station list to the specified priority.
+      Stationlist is an array. Surface optional
+    - All of these can be called directly in the console - use "/c"
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.22
+Date: 2020/08/02
+  Bugfixes:
+    - Corrected error in event causing crash (added then)
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.21
+Date: 2020/08/02
+  Bugfixes:
+    - Fixed debug count that was generated if using the refuelling consist combinator
+    - Fixed duplicate lamp crash
+    - Fixed new surface crash on using BP for first request station (with requester)
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.20
+Date: 2020/07/05
+  Bugfixes:
+    - Fixed crash from placing requester station where the train counter cannot be
+      placed.
+    - Fixed issue when opening new requester without closing last - still used to
+      show the old requester details.
+    - Fixed under some circumstances a requester thinks it has already created an
+      outstanding request when it has not.  Now there is an extra validation to check
+      the existence of the outstanding request else the requester proceeds to try to
+      match trains to its requirement.
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.19
+Date: 2020/06/15
+  Features:
+    - Previously if a requester called a train that couldn't immediately be supplied
+      then the request became an outstanding request.  When a train became available
+      it would immediately fulfill an existing outstanding request.  Now the requester
+      is rechecked to see if the requirement still exists before sending the train.
+    - Two new commands added - /tsm_export - will write the contents of your priorities
+      to a file (like a BP); /tsm_import - will import the priorities from your file
+      (credit to billbo99 for these commands)
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.18
+Date: 2020/05/24
+  Bugfixes:
+    - Fixed rare crash due to nil requester during requester update
+  Features:
+    - Now instead of batch processing requesters, only one requester will be responded to
+      on any one tick.  As the train counter usually takes at least one tick to update, this
+      change will likely prevent unexpected duplicate train calls.  The interval (in ticks)
+      between train calls can be set in mod map settings.  Lower numbers will impair updates
+      performance.
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.17
+Date: 2020/05/17
+  Bugfixes:
+    - Fixed rare crash due to invalid requester during requester update
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.16
+Date: 2020/04/25
+  Bugfixes:
+    - Fixed renaming a requester station with active unsatisfied requests would leave the
+      station unable to request new trains until /tsm_reset or requester replace
+    - Fixed a possible cause of multiple trains responding to very first requester call if
+      demand is present during the adding of priority to the requester
+    - Fixed rare crash event "control.lua:2386: bad argument #1 of 2 to 'pairs' (table
+      expected, got nil)"
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.15
+Date: 2020/04/17
+  Features:
+    - The auto rename for preventing duplicate requester function now tries to find a
+      numeric value to increment in the last two characters of the station name.
+      Otherwise it now appends '01'.
+  Bugfixes:
+    - Graphical display issues with the train counter should now be resolved
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.14
+Date: 2020/04/05
+  Bugfixes:
+    - Fixed a rare crash on editing requesters that can only occur when there are no
+      requests
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.13
+Date: 2020/04/05
+  Features:
+    - New event handling for script based create and destroy - should work correctly
+      with construction drones mod now
+    - Fuel stop name - the inclusion of the number of locomotives in the name is now
+      able to be turned off in mod startup settings
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.12
+Date: 2020/03/19
+  Bugfixes:
+    - Correction to icons in energy and virtual signal view for requester and train
+      counter
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.11
+Date: 2020/03/09
+  Features:
+    - Train configuration reader (for refuelling stations) now has a third
+      signal that provides the location of the second locomotive from the
+      front of the train. Used to enable distinguishing 4-8-0 from
+      1-2-1-2-1-2-1-2 for example
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.10
+Date: 2020/03/07
+  Bugfixes:
+    - All Gui interactions now explicity check that the source was TSM
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.9
+Date: 2020/03/03
+  Bugfixes:
+    - Fixes incorrect placement of very first requester can result in crash
+    - Fixes rare robot decontstruction of multiple requesters crash
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.8
+Date: 2020/03/01
+  Bugfixes:
+    - Fixes rare issue caused by incorrect train requester "  /control.lua:2137:
+       bad argument #1 of 2 to 'pairs' "
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.7
+Date: 2020/02/25
+  Bugfixes:
+    - Fixes rare issue caused by orphaned train counter "...control.lua:2461:
+      in function 'updateCounters'..."
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.6
+Date: 2020/02/22
+  Bugfixes:
+    - Fixed if you delete the current stop from the train schedule, and it
+      happens to be a requester stop then the train counter is not updated
+      as the train moves to the next stop in the schedule
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.5
+Date: 2020/02/21
+  Bugfixes:
+    - Fixes crash on requester name change when no requests exist "on_entity_renamed
+      (ID 57) train-pubsub/control.lua:1287: bad argument #1 of 2 to 'pairs' ..."
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.4
+Date: 2020/02/20
+  Bugfixes:
+    - Migration script migrate_reqpri fix for new games
+  Features:
+    - /reset renamed to /tsm_reset. For noe /reset tells you to use /tsm_reset
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.3
+Date: 2020/02/20
+  Bugfixes:
+    - Removed debug text
+  Features:
+    - Requester priorities now default to 50.  Existing requesters will be incremented
+      by 49 to bring them into line with the new default.  This is to make it easier to
+      increase the priority on a requester (lower the number to increase priority)
+    - Requester priorities are now listed on the requester listing and the outstanding
+      requests listing
+    - Resource filters have been added to the requester tab, the priority tab and the
+      outstanding requests tab.  Left mouse click to apply a dislay filter, right mouse
+      click to remove the filter
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.2
+Date: 2020/02/17
+  Bugfixes:
+    - In general will now handle orphaned requests (ie requests to nonexistent stations)
+      better
+    - Fixed crash from orphaned request under some circumstances - "control.lua:1135:
+      attempt to index field '?' (a nil value)"
+    - Fixed renaming requester stations with open requests could result in an orphaned
+      request
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.1
+Date: 2020/01/26
+  Bugfixes:
+    - Fixed crash after /reset - control.lua 2165 attempt to index field '?' etc
+
+---------------------------------------------------------------------------------------------------
+Version: 0.6.0
+Date: 2020/01/23
+  Features:
+    - Compatibility release for 0.18
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.21
+Date: 2020/01/08
+  Bugfixes:
+    - On leaving a station, now all train counters in the train schedule are re-evaluated.
+      This covers cases where manual redirection skips stops in the current schedule.
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.20
+Date: 2020/01/08
+  Bugfixes:
+    - Fixed if a train was manually redirected to a requester station, the train counter
+      would not update correctly at the receiving station.
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.19
+Date: 2020/01/06
+  Bugfixes:
+    - Fixed issue if robots place requester train stop after the requester lamp, and the
+      lamp is in the second tier
+    - Fixed deleting requester lamp with unsatisfied request doesn't remove the request
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.18
+Date: 2020/01/06
+  Bugfixes:
+    - Fixed that under some circumstances the error raised when creating a new priority did
+      not fire
+    - Fized an issue around renaming of requester stations affecting unrelated requesters
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.17
+Date: 2020/01/05
+  Features:
+    - The train station types are now fast replaceable
+    - Electric trains (modded) no longer seek fuel
+    - Priority screen now has a horizontal scroll bar
+    - All information window scroll bars can have the thresholds changed under mod settings
+      for each player
+    - The system now proactively checks the validity of any potential train schedule request.
+      If there is an issue, a notification is generated identifying the requestor(lamp) where
+      the problem is occurring.  This message will continue to be generated once per minute
+      only until the requester station is renamed to resolve the issue.
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.16
+Date: 2020/01/05
+  Bugfixes:
+    - Debug messages removed
+    - Deletion of priorities now possible before any requesters assigned
+    - TrainRequester light can be set with no matching priority even prior to any matched
+      set of reqester and priority
+    - Unmatched train requester can have its icons deleted even prior to any matched set
+      of requester and priority
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.15
+Date: 2020/01/02
+  Bugfixes:
+    - Further fix to fuelstop behaviour as only station in schedule
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.14
+Date: 2020/01/02
+  Bugfixes:
+    - Fixes a rare issue that can arise if you add FuelStop as the only station in the schedule
+      and auto drive to it
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.13
+Date: 2019/12/30
+  Bugfixes:
+    - Fixes manual drive issue "train-pubsub/control.lua:1391: attempt to index local
+      'schedule' (a nil value)"
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.12
+Date: 2019/12/28
+  Bugfixes:
+    - Fixes on_pre_entity_settings_pasted (control-util.lua:437) crash
+    - Added check for nil player_index to the function on_runtime_mod_setting_changed
+    - Added check for nil schedule records - leeh fix
+    - Added return to update_circuit_requesters - leeh fix
+    - Added more events to the train counter update initiation
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.11
+Date: 2019/09/10
+  Bugfixes:
+    - Having zero requester stations setup could result in a crash (control.lua:1366)
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.10
+Date: 2019/07/10
+  Bugfixes:
+    - Copy-paste (shift right click, shift left click) of a requester station
+      has been fixed.
+    - Fixed on_robot_built_entity crash (control.lua 1874)
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.9
+Date: 2019/06/10
+  Features:
+    - Renaming a requester station will force the closure of any open requesters.
+      This prevents a crash from editing the still open requester.
+    - Closing the TSM menu gui will also now close any open requester gui
+  Bugfixes:
+    - Fixed crash on_nth_tick related to nil newpriorities
+    - Fixed crash on_train_changed_state
+    - If a train waiting at a requester train stop was changed to manual and then
+      directed to another train stop, the train counter did not update correctly.
+      This is now fixed.
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.8
+Date: 2019/02/10
+  Features:
+    - Command "/reset" will reset outstanding requests and fix most data
+      related issues with requesters that have stopped calling trains. Should
+      be required once only.
+  Bugfixes:
+    - Fixed crash on changing priorities - error message produced instead
+    - Fixed crash in updaterequestedpublisher when LuaEntity invalid
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.7
+Date: 2019/28/09
+  Bugfixes:
+    - Error while running event train-pubsub::on_train_changed_state ...control.lua:2023
+      fixed
+    - An issue may arise with gui text fields if other mods were also using them.  This
+      is also fixed
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.6
+Date: 2019/23/09
+  Features:
+    - Requesters are now sorted properly
+  Bugfixes:
+    - Trains are supplied to oldest outstanding request (assuming equal priority)
+    - Fixed crash on_pre_player_mined_item
+    - Fixed crash in updaterequestedpublisher
+    - Erroneous requesters can be deleted via the map ping on the outstanding request
+      tab
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.5
+Date: 2019/16/09
+  Bugfixes:
+    - Fixed crash caused by updating a priority with a new station when that
+      immediately results in calling a train to an existing requester.
+      ("Must specify one of station or rail")
+    - Fixed key "type" not found ... control.lua 255
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.4
+Date: 2019/15/09
+  Bugfixes:
+    - Fatal error when removing requester station is fixed
+    - If a requester station was removed leaving an orphaned requester that is also
+      active, that requester would start calling trains to station " ".  This would
+      happen even if a new requester station replaced the old.  This is fixed in two
+      ways - first, a blank requester will now never call trains; second - the
+      handling when there is a replacement requester station now works correctly.
+  Features:
+    - The name of the station that the requester believes it belongs to is now the
+      very last line of the gui detail for the requester.
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.3
+Date: 2019/12/09
+  Bugfixes:
+    - Corrected crash line 2111 of control
+    - Corrected connecting railcars issue
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.2
+Date: 2019/11/09
+  Bugfixes:
+    - Corrected crash line 326 of control
+  Features:
+    - Updated Korean language support
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.1
+Date: 2019/11/09
+  Bugfixes:
+    - Corrected crash line 311 of control-util
+    - Fixed requester graphic (now shows R not P)
+
+---------------------------------------------------------------------------------------------------
+Version: 0.5.0
+Date: 2019/10/09
+  Features:
+    - Priorities are now defined by both the resource icon and the id icon
+    - Wait conditions allow for item/fluid count to be used. This is based on whether the
+      resource icon is an item or a fluid - virtual has no affect and will not generate a
+      count wait condition.
+    - Requesters can be updated directly via the GUI using the new "e" button (reselect
+      via the "e" button to close)
+    - Requesters can be hidden from the default Outstanding Requests view. In addition,
+      when in the Outstanding Requests view, players can unhide all the hidden requesters
+      by toggle.
+    - Map ping requester now shows a minimap in the centre of the screen in addition to
+      adding an icon to map view. You can close the minimap by clicking anywhere else on
+      the screen.
+    - The train counter (entity attached to the foot of the requester train station) now
+      records the resource of each train inbound based on the resource icon on the priority.
+      This is recorded as a positive number. The trains on the way signal continues to be
+      generated as a total count.
+    - You can now supply a negative resource signal direct to a Requester Train Stop to
+      request a train of that resource. The source of the train will always be locked to the
+      double icon priority for that resource (eg if you supply a negative 1 iron plate to the
+      Requester train stop, then that is identical effect to activating a requester using
+      priority scheme iron plate - iron plate).
+    - Duplicate Requester Train Stops are now actively prevented from occurring. The mod will
+      automatically rename the station by appending an "X" until a unique name is found.
+    - The priority setup is now indexed by surface so all information, priorities etc are
+      distinct and reusable on multi-surface worlds.
+    - Performance of the mod has been improved up to 50% depending on the specifics of your
+      world.
+    - You can now copy the requestor priority information to other requesters.
+
+---------------------------------------------------------------------------------------------------
+Version: 0.4.10
+Date: 2019/04/05
+  Bugfixes:
+    - Fixes crash on attempt to rotate requester train stop
+
+---------------------------------------------------------------------------------------------------
+Version: 0.4.9
+Date: 2019/04/05
+  Bugfixes:
+    - Copying a requester station with active requester (including
+      copying station name) then changing resource and renaming
+      the new station was leading to deliveries of the wrong
+      resource to the new station.  This has been fixed now.
+
+---------------------------------------------------------------------------------------------------
+Version: 0.4.8
+Date: 2019/19/04
+  Minor features:
+    - Added Russian languauge support courtesy of Dodther
+    - Korean language updated
+  Bugfixes:
+    - Fixes crash on deleting priority with no stations setup
+    - Fixes crash on deleting priorities when the station edit GUI is open
+
+---------------------------------------------------------------------------------------------------
+Version: 0.4.7
+Date: 2019/14/04
+  Bugfixes:
+    - Fixes crash on using robots to build requester stations
+
+---------------------------------------------------------------------------------------------------
+Version: 0.4.5
+Date: 2019/06/04
+  Minor features:
+    - Added command "/fix_raw_wood" - this will convert "raw-wood" in priorities and requesters to
+      "wood" for 0.16 to 0.17 compatibility
+    - added warning message if requester is placed more than 2 tiles away from a requester train
+      station.  Note, the warning is only produced when manually placed, not when placed by robot
+
+---------------------------------------------------------------------------------------------------
+Version: 0.4.4
+Date: 2019/09/03
+  Bugfixes:
+    - Fix so that using the new item tags in the fuel station name won't
+      cause random stations to be removed from a trains schedule every
+      time it leaves a stop.
+    - Updated changelog.txt to be the YAML format that the Factorio 0.17
+      mod manager wants to see.
+    - Changed style to use minimal_width to fix visibility of "p" on the ping
+      map button in Korean version
+    - updated Korean translation
+
+---------------------------------------------------------------------------------------------------
+Version: 0.4.3
+Date: 2019/09/03
+  Minor features:
+    - Added thumbnail
+    - added technology description to locale file
+  Bugfixes:
+    - fixed width of buttons used in guis
+
+---------------------------------------------------------------------------------------------------
+Version: 0.4.2
+Date: 2019/09/03
+  Bugfixes:
+    - Fixed initial supplier settings not saved.  Now when you save a
+      new priority default settings are applied, then you need to go
+      back in edit mode to change the wait condition settings, if
+      desired
+
+---------------------------------------------------------------------------------------------------
+Version: 0.4.1
+Date: 2019/02/03
+  Bugfixes:
+    - Fixed LuaStyle doesn't contain key visible issue
+
+---------------------------------------------------------------------------------------------------
+Version: 0.4.0
+Date: 2019/02/03
+  Major Features:
+    - Version 0,17 compatibility
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.30
+Date: 2019/10/02
+  Bugfixes:
+    - in some circumstances renaming a station with active requesters
+      will have the requesters generate requests on the old station name
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.29
+Date: 2019/29/01
+  Bugfixes:
+    - Fixed invalid entity in clear_train_config issue (Tantabobo)
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.28
+Date: 2019/27/01
+  Bugfixes:
+    - Adds check in on_gui_state_chenged_event to restrict action to TSM
+      inspired events only (re Train Scaling mod compatibility)
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.27
+Date: 2019/25/01
+  Features:
+    - added command "/fix_ps_stations" to remove nil stations from any
+      priority stationlist should this occur
+  Bugfixes:
+    - updated Korean translation
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.26
+Date: 2019/17/01
+  Bugfixes:
+    - another possible cause of multi-player desync caused by
+      GUI interactions fix
+    - updated Korean translation and cfg file
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.25
+Date: 2019/15/01
+  Bugfixes:
+    - Restores the update and save buttons to the priority schema
+      functions
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.24
+Date: 2019/15/01
+  Bugfixes:
+    - another possible cause of multi-player desync caused by GUI
+      interactions fix
+    - on_load explicitly only loads conditional event handlers
+  Features:
+    - Fuelstop combinator changes - now it clears on train departure and
+      only provides 2 signals - number of locomoptives and number of
+      non-locomotives
+    - TSM menu graphics change - if already open from previous version
+      you may need to close and reopen (also slight change to order)
+    - Outstanding requests now also provides time outstanding
+      information in minutes
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.23
+Date: 2019/13/01
+  Bugfixes:
+    - Fixes another possible cause of multi-player desync caused by GUI
+      iteractions
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.22
+Date: 2019/11/01
+  Bugfixes:
+    - fixes crashes caused by invalid requester train stops.  Invalid
+      entity is removed from the database
+    - map ping on invalid requesters will now delete the invalid item
+      from the database
+    - Blueprinting now restores the wire connection from the train on
+      the way signal to the requester
+    - Blueprinted requester train stops now also more likely to update
+      the requester to changed train stop name correctly
+  Minor features:
+    - improves sorting on the station list drop down selection
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.21
+Date: 2019/06/01
+  Bugfixes:
+    - improves GUI behaviour under multi-player where there are many
+      players potentially updating the priority schema's at once
+    - updates the Korean translation
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.20
+Date: 2018/28/12
+  Bugfixes:
+    - corrects a potential data integrity issue arising in function
+      "check_train_in_Sub_station"
+    - corrects behaviour when a train is available in the supply station
+      and a calling requester activates
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.19
+Date: 2018/28/12
+  Bugfixes:
+    - adds the order property back into the new virtual signals (for
+      PickerTweaks compatibility)
+    - adds more train validation to "check_train_in_Sub_station"
+      function
+  Minor features:
+    - adds item group name for TSM signals
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.18
+Date: 2018/26/12
+  Features:
+    - Adds new empty wagon icons for each vanilla raw product and oil
+      products (icons by Jelgadis)
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.17
+Date: 2018/22/12
+  Bugfixes:
+    - Fixes crash on gui click
+    - fixes error message when opening armor equipment screen
+    - Korean language corrections
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.16
+Date: 2018/22/12
+  Major features:
+    - Adds Korean language support
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.15
+Date: 2018/22/12
+  Changes:
+    - Changed the recipe cost to remove advanced circuits.
+      You now only need the electronic circuits (to improve
+      accessibility)
+  Features:
+    - Added all the new GUI titles into the locale file
+    - The fuelstop name is now configurable via mod settings in the
+      startup settings area
+  Bugfixes:
+    - Fixed GUI issue with auto research
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.14
+Date: 2018/21/12
+  Bugfixes:
+    - Fixed a rare error warning message - "attempt to index field
+      'sub_index' (a nil value)"
+  Changes:
+    - validation now enforces that the priority schema "ID" field is
+      unique
+  Features:
+    - you can now edit a priority schema to access the wait condition
+      parser.  This provides a GUI interface to change the default wait
+      conditions given to any train assigned a schedule by this
+      priority.  For new priority schemas, you need to save the initial
+      station selection first then go back in under edit mode.
+    - you can now assign a process priority to the requester entity.
+      This will affect the order in which requesters are processed when
+      there are outstanding requests.  A priority of "1" is highest and
+      the default.  Positive numbers only are accepted, and the higher
+      the positive number the lower the process priority.
+    - refer new demo example (replacing old multi-station) for the new
+      functionality at work
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.13
+Date: 2018/17/12
+  Features:
+    - Adds a train configuration combinator for use at FuelStopx only.
+      The combinator will enable differentiation between rolling stock
+      configurations so that for example you can correctly refuel 1-1-1s
+      and 1-2-1 trains on the same network.
+    - Add new startup mod setting to switrch admin only on or off for
+      editing the priority schemas
+  Bugfixes:
+    - Addresses a rare crash on train count signal lost
+    - Addresses the station dropdown in the edit list sometimes shows
+      duplicates
+    - Addresses leftover debug messages
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.12
+Date: 2018/15/12
+  Bugfixes:
+    - Addresses crash caused by removing all of a train's schedule as
+      the train pulls into a train station
+    - Addresses using blueprints to place requester's results in
+      inoperable requester
+    - Addresses when requester station is unreachable all available
+      trains from the corresponding depot are deployed to that stop
+    - Addresses an issue that could deactivate one train on the way
+      signal (across entire network) when removing requester train stops
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.11
+Date: 2018/13/12
+  Features:
+    - the ability to use more than one supply station in a schedule. As
+      long as the station "wait until" condition is set as "cicuit" then
+      the supply station will remain in the schedule.  This allows for
+      from 1 ... n supply stations in the schedule where n is
+      arbitrarily large (no limit).
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.10
+Date: 2018/12/12
+  Bugfixes:
+    - Addresses "trains stopped working" - in addition if you have this
+      issue you need to run command "/fix_requests" to repair the
+      database
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.9
+Date: 2018/12/12
+  Bugfixes:
+    - Addresses error from on_configuration_changed (refer hanes)
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.8
+Date: 2018/10/12
+  Bugfixes:
+    - Fix to defend against possible desync issues in large MP maps.
+      On_configuration_changed changes to global data is now on a delta
+      basis rather than table rebuild basis.
+    - Also the map ping now places the icon on the map at the requesters
+      location, moved to the right 5 tiles so it is not directly over
+      the train station.
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.7
+Date: 2018/07/12
+  Features:
+    - Added delete priority functionality (admin only), validated
+      against requesters and outstanding requests - the prirority must
+      not be used in either. To help you find these requesters or
+      outstanding requests, there is now a map ping feature available on
+      the 'RQ' tab and 'R' tab respectively
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.6
+Date: 2018/07/12
+  Bugfixes:
+    - Removes debug code that could cause lua errors under some
+      circumstances
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.5
+Date: 2018/07/12
+  Bugfixes:
+    - Fixes an issue in pre-existing games that added the mod after the
+      event.  Existing trains may not be recognised properly by the mod.
+      The train table is now rebuilt on configuration changed.
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.4
+Date: 2018/07/12
+  Bugfixes:
+    - An issue could previously arise where if you were using duplicate
+      requester train stops and then deleting one, the requesters may
+      retain their original default backer name rather than be updated
+      correctly with the new name.  You can verify if this is the case
+      by scanning your 'R' screen list.  This update will stop this from
+      occurring. Also, the command "/fix_requests" will correct any
+      historic occurrence of this issue - run only once.
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.3
+Date: 2018/06/12
+  Bugfixes:
+    - Fixed adding supplier stations vis BP with station name returns lua rror
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.2
+Date: 2018/04/12
+  Bugfixes:
+    - Fixed quirky behaviour when train already at Supplier stop when
+      requster initially created (thinkong)
+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.1
+Date: 2018/03/12
+  Changes:
+    - Redacted
