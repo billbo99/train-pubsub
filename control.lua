@@ -722,7 +722,7 @@ local function copy_icon(event)
 	gui_open(player, global.newpublishers[surface][backer][key].entity)
 
 
---[[ 
+--[[
 	local gui = player.gui.relative
 	if gui.train_publisher then
 		local station = gui.train_publisher.backer_name
@@ -1507,7 +1507,7 @@ end)
 
 local function check_fuel(locs)
 	for _,loc in pairs(locs) do
-		if #loc.burner.inventory > 0 then
+		if loc.burner and #loc.burner.inventory > 0 then
 			if lowFuel(loc) then
 				return true
 			end
@@ -1701,7 +1701,7 @@ function gui_open(player, controller, modgui)
 	local status,err = pcall(function()
 	if controller.name == "train-publisher" then
 	--	local gui = mod_gui.get_frame_flow(player)
-		local gui 
+		local gui
 		local frame
 		if not modgui then
 			gui = player.gui.relative
@@ -1819,7 +1819,7 @@ function gui_close(player, controller)
 	local status,err = pcall(function()
 	if controller.name == "train-publisher" then
 		local gui = mod_gui.get_frame_flow(player)
-		local frame = gui.train_publisher
+		local frame = gui.train_publisher or gui.gui.relative.train_publisher
 
 		frame.destroy()
 		if global.cur_publisher then
@@ -1962,15 +1962,15 @@ script.on_event(defines.events.on_gui_closed, function(event)
 			elseif event.entity.type == "locomotive" then
 				local player = event.player_index
 				local surface = event.entity.surface.name
-				if player ~= nil then			
+				if player ~= nil and global.newcounters then
 					if global.player[player].destination ~= nil then
 						local destination = global.player[player].destination
 						for _,counter in pairs(global.newcounters[surface]) do
 							if counter.station == destination then
 								updateCounters(counter)
 							end
-						end	
-					end				
+						end
+					end
 				end
 			end
 		end
@@ -2655,7 +2655,7 @@ function updatePublishers(publisher, backer_name, x)
 				if publisher.priority.resource.name == request.priority.resource.name and
 					publisher.priority.id.name == request.priority.id.name then
 						return false
-					end	
+					end
 			end
 			log("Revoking false Existing request "  .. publisher.backer_name .. " " .. publisher.priority.resource.name)
 			publisher.request = false                              -- Experimental
@@ -2878,7 +2878,7 @@ local function on_train_schedule_changed(event)
 				end
 			end
 			-- if you removed a requester from schedule then check player record
---[[ 			
+--[[
 			if player ~= nil then
 				game.print("player" .. player)
 				game.print(train.id .. global.player[player].entity.train.id)
@@ -2890,10 +2890,10 @@ local function on_train_schedule_changed(event)
 							 	game.print("event updating counter for " .. counter.backer_name)
 								updateCounters(counter)
 							end
-						end	
+						end
 					end
 				end
-			end	 ]]				
+			end	 ]]
 		end
 	end
 end
@@ -3234,14 +3234,14 @@ while i < #global.newpublishers[surface][backer_name] do
 		--	for i,requester in pairs(global.newpublishers[surface][backer_name]) do
 				game.print(surface .. backer_name ..i)
 				if requester == nil then
-				game.print("nil")	
+				game.print("nil")
 				table.remove(global.newpublishers[surface][backer_name], i)
-				else 
+				else
 					i = i + 1
 				end
 			end
 		--end
-		
+
 	--end
 	collectgarbage("collect")
 end)

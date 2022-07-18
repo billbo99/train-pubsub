@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.8
+Date: 2022/07/18
+  Bugfixes:
+    - __train-pubsub__/control.lua:1510: attempt to index field 'burner' (a nil value)
+      - caused by trains with no fuel slots
+    - __train-pubsub__/control.lua:1968: attempt to index field 'newcounters' (a nil value)
+      - caused by no schedule having been created when closing TSM GUI
+    - stop gui appearing on other lamps .. will first have to open/close a Train Requester lamp
+---------------------------------------------------------------------------------------------------
 Version: 1.1.7
 Date: 2021/11/16
   Bugfixes:

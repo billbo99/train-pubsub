@@ -13,7 +13,7 @@ script.on_event(defines.events.on_player_setup_blueprint, function(event)
 end)
 
 script.on_event(defines.events.on_player_configured_blueprint, function(event)
- --   game.print("In BP configured")
+--   game.print("In BP configured")
     local status,err = pcall(function()
     local player = game.players[event.player_index]
     local stack = player.cursor_stack
@@ -23,7 +23,7 @@ script.on_event(defines.events.on_player_configured_blueprint, function(event)
         for idx,bp_entity in pairs(global.player[event.player_index].bp) do
         --     game.print(idx .. " :  " .. bp_entity.unit_number)
             for i,entity in pairs(global.newpublishers[player.surface.name]) do
-               for j,res_entity in pairs(entity) do
+                for j,res_entity in pairs(entity) do
                     if res_entity.entity.unit_number == bp_entity.unit_number then
                     --    game.print("entity =  bp entity")
                         stack.set_blueprint_entity_tags(idx, {
@@ -33,7 +33,7 @@ script.on_event(defines.events.on_player_configured_blueprint, function(event)
                             proc_priority = res_entity.proc_priority
                         })
                         break
-                   end
+                    end
                 end
             end
         end
