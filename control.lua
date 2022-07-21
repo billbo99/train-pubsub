@@ -36,6 +36,18 @@ get_sprite_button = function(player)
   return button
 end
 
+script.on_event(defines.events.on_surface_created, function(event)
+    local surface = game.get_surface(event.surface_index)
+    global.newcounters = global.newcounters or {}
+    global.newcounters[surface.name] = global.newcounters[surface.name] or {}
+
+    global.newpriority = global.newpriority or {}
+    global.newpriority[surface.name] = global.newpriority[surface.name] or {}
+
+    global.newpublishers = global.newpublishers or {}
+    global.newpublishers[surface.name] = global.newpublishers[surface.name] or {}
+end)
+
 script.on_event(defines.events.on_research_finished, function(event)
 
     if event.research.name == 'train-manager' then
@@ -60,11 +72,27 @@ local function on_player_joined_game(event)
 	end
 end
 
+local function init_globals()
+    if game then
+        global.newcounters = global.newcounters or {}
+        global.newpriority = global.newpriority or {}
+        global.newpublishers = global.newpublishers or {}
+
+        for _, surface in pairs(game.surfaces) do
+            global.newcounters[surface.name] = global.newcounters[surface.name] or {}
+            global.newpriority[surface.name] = global.newpriority[surface.name] or {}
+            global.newpublishers[surface.name] = global.newpublishers[surface.name] or {}
+        end
+    end
+end
+
 -- Fuel handling
 local function on_configuration_changed(modlist)
 	--global.removeFuelStop = global.removeFuelStop or {}
 	getEnergyList()
-	if modlist.mod_changes["train-pubsub"] then
+    init_globals()
+
+    if modlist.mod_changes["train-pubsub"] then
 		if modlist.mod_changes["train-pubsub"].old_version == nil then
 			modlist.mod_changes["train-pubsub"].old_version = "0.0.0"
 		end
@@ -92,6 +120,8 @@ end
 
 local function onLoad()
 	--global.removeFuelStop = global.removeFuelStop or {}
+
+    init_globals()
 	getEnergyList()
 	nth_tick()
 end
@@ -1962,7 +1992,7 @@ script.on_event(defines.events.on_gui_closed, function(event)
 			elseif event.entity.type == "locomotive" then
 				local player = event.player_index
 				local surface = event.entity.surface.name
-				if player ~= nil and global.newcounters then
+				if player ~= nil and global.newcounters and global.newcounters[surface] then
 					if global.player[player].destination ~= nil then
 						local destination = global.player[player].destination
 						for _,counter in pairs(global.newcounters[surface]) do

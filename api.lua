@@ -7,7 +7,7 @@ remote.add_interface("TSM-API",
             return {}
         end
     else
-        if global.newpriority ~= nilt then
+        if global.newpriority ~= nil then
             return global.newpriority
         else
             return {}

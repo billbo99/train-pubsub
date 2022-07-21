@@ -1,6 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.9
+Date: 2022/07/21
+  Uploaded By:
+    - billbo99
+  Bugfixes:
+    - __train-pubsub__/control.lua:1968: bad argument #1 of 2 to 'pairs' (table expected, got nil)
+    - made some changes to ensure globals were initalized for each surface and on surface creation event to avoid some crash situations
+---------------------------------------------------------------------------------------------------
 Version: 1.1.8
 Date: 2022/07/18
+  Uploaded By:
+    - billbo99
   Bugfixes:
     - __train-pubsub__/control.lua:1510: attempt to index field 'burner' (a nil value)
       - caused by trains with no fuel slots
