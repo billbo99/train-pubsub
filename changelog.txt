@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.10
+Date: 2022/07/25
+  Uploaded By:
+    - billbo99
+  Bugfixes:
+    - __train-pubsub__/control.lua:1979: attempt to index field '?' (a nil value)
+
+---------------------------------------------------------------------------------------------------
 Version: 1.1.9
 Date: 2022/07/21
   Uploaded By:
@@ -6,6 +14,7 @@ Date: 2022/07/21
   Bugfixes:
     - __train-pubsub__/control.lua:1968: bad argument #1 of 2 to 'pairs' (table expected, got nil)
     - made some changes to ensure globals were initalized for each surface and on surface creation event to avoid some crash situations
+
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.8
 Date: 2022/07/18
