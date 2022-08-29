@@ -404,6 +404,7 @@ function find_best_match(station)
 			elseif request.priority.id == nil then
 			elseif request.priority.id == {} then
 			else
+                if global.newpriority[surface] and global.newpriority[surface][request.priority.resource.name] and global.newpriority[surface][request.priority.resource.name][request.priority.id.name] then
 			local priority = global.newpriority[surface][request.priority.resource.name][request.priority.id.name]
 	--	for j,priority in pairs(global.priority) do
 		--	if (request.priority.name == priority.id.name) and not (request.backer_name == nil) then
@@ -435,6 +436,7 @@ function find_best_match(station)
 						--end
 					end
 				end
+			end
 			end
 			end
 		end
