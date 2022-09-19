@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.12
+Date: 2022/09/19
+  Uploaded By:
+    - billbo99
+  Bugfixes:
+    - weirdness when copy pasting a Train Request and editing the old lamp when touching the new lamp https://mods.factorio.com/mod/train-pubsub/discussion/631f8d2a50cf93d743c857da
+
+---------------------------------------------------------------------------------------------------
 Version: 1.1.11
 Date: 2022/08/29
   Uploaded By:
