@@ -506,7 +506,12 @@ local function stationlist(priority)
     if priority ~= nil then
         if priority.station then
             for _, station in ipairs(priority.station) do
-                temp = temp .. station[2] .. "  :  "
+                if temp == "" then
+                    temp = station[2]
+                else
+                    temp = temp .. "\n" .. station[2]
+                end
+                -- temp = temp .. station[2] .. "  :  "
             end
         end
     end
@@ -587,7 +592,25 @@ function gui_open_station_frame(player, mode)
     for _, stationX in ipairs(global.player[player.index].station) do
         frame.add { type = "label", caption = stationX[2] }
     end
-    frame.add { type = "drop-down", name = "station_dd", items = global.player[player.index].list }
+
+    local resource_search2 = gui.pri_frame.heading.resource_search2.elem_value
+    local dd_list = global.player[player.index].list
+    if resource_search2 ~= nil then
+        local el_type = resource_search2.type
+        local el_name = resource_search2.name
+        dd_list = {}
+        for k, v in ipairs(global.player[player.index].list) do
+
+            if string.find(v, el_type, nil, true) then
+                if string.find(v, el_name, nil, true) then
+                    table.insert(dd_list, v)
+                end
+            end
+
+        end
+    end
+
+    frame.add { type = "drop-down", name = "station_dd", items = dd_list }
 
     if mode == "add" or mode == "add+" then
         global.player[player.index].bname = "tsm_save_station_button"
@@ -776,7 +799,7 @@ local function on_gui_selection_state_changed(event)
     --	local status,err = pcall(function()
     --	debugp(element.name)
     if element.name == "station_dd" then
-        local item = { "", global.player[event.player_index].list[element.selected_index] }
+        local item = { "", element.items[element.selected_index] }
 
         table.insert(global.player[event.player_index].station, item)
         --  game.write_file("apend_stations",serpent.block(station),{comment=false})

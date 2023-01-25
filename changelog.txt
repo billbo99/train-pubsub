@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.14
+Date: 2023/01/25
+  Uploaded By:
+    - billbo99
+  Changes:
+    - Added "optics" as a research dependency to ensure lamps are unlocked
+    - Made it so that the filter set in "Supply Source Priorities" is used to filter which stations can be selected from
+---------------------------------------------------------------------------------------------------
 Version: 1.1.13
 Date: 2022/09/19
   Uploaded By:

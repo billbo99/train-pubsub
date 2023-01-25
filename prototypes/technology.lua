@@ -4,7 +4,7 @@ data:extend({
       name = "train-manager",
       icon = "__train-pubsub__/graphics//technology/train-supply-manager.png",
       icon_size = 128,
-      prerequisites = {"circuit-network", "automated-rail-transportation"},
+      prerequisites = {"circuit-network", "automated-rail-transportation", "optics"},
       effects =
       {
         {
