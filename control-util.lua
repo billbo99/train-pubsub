@@ -21,30 +21,35 @@ function Check_train_config(train, station)
                 if locos < 2 then i = i + 1 end
             end
         end
-        cb.set_signal(1, { signal = {
-            type = "item",
-            name = "locomotive"
-        },
-            count = numLoco }
+        cb.set_signal(1, {
+            signal = {
+                type = "item",
+                name = "locomotive"
+            },
+            count = numLoco
+        }
         )
-        cb.set_signal(2, { signal = {
-            type = "item",
-            name = "cargo-wagon"
-        },
-            count = numWagons }
+        cb.set_signal(2, {
+            signal = {
+                type = "item",
+                name = "cargo-wagon"
+            },
+            count = numWagons
+        }
         )
 
         if i > 1 then
-            cb.set_signal(3, { signal = {
-                type = "virtual",
-                name = "locomotive2"
-            },
-                count = i }
+            cb.set_signal(3, {
+                signal = {
+                    type = "virtual",
+                    name = "locomotive2"
+                },
+                count = i
+            }
             )
         end
         global.train_config = global.train_config or {}
         global.train_config[#global.train_config + 1] = { config = config, station = station }
-
     end
 end
 
@@ -94,8 +99,11 @@ function build_schedule(train, backer_name, priority)
         end
         if priority.wc.inactivity == true then
             local ticks = 60 * priority.wc.inact_int
-            record.wait_conditions[#record.wait_conditions + 1] = { type = "inactivity", compare_type = compare,
-                ticks = ticks }
+            record.wait_conditions[#record.wait_conditions + 1] = {
+                type = "inactivity",
+                compare_type = compare,
+                ticks = ticks
+            }
         end
         if priority.wc.wait_timer == true then
             local ticks = 60 * priority.wc.wait_int
@@ -106,10 +114,13 @@ function build_schedule(train, backer_name, priority)
             local count_typ = "item_count"
             --	game.print(priority.resource.type)
             if priority.resource.type == "fluid" then count_typ = "fluid_count" end
-            record.wait_conditions[#record.wait_conditions + 1] = { type = count_typ, compare_type = compare,
+            record.wait_conditions[#record.wait_conditions + 1] = {
+                type = count_typ,
+                compare_type = compare,
                 condition = { comparator = comp_sym[priority.wc.count_ddn],
                     first_signal = { type = priority.resource.type, name = priority.resource.name },
-                    constant = priority.wc.count_amt } }
+                    constant = priority.wc.count_amt }
+            }
         end
     else
         record.wait_conditions[#record.wait_conditions + 1] = { type = "empty", compare_type = "or" }
@@ -279,8 +290,11 @@ function save_priority_wc(event)
             global.player[player.index].wc.rb_and = true
         end
     elseif name == "efinc" then
-        if wc.inc_ef == true then global.player[player.index].wc.inc_ef = false
-        elseif wc.inc_ef == false then global.player[player.index].wc.inc_ef = true end
+        if wc.inc_ef == true then
+            global.player[player.index].wc.inc_ef = false
+        elseif wc.inc_ef == false then
+            global.player[player.index].wc.inc_ef = true
+        end
     elseif name == "empty" then
         if wc.empty == false then
             global.player[player.index].wc.empty = true
@@ -292,14 +306,23 @@ function save_priority_wc(event)
             global.player[player.index].wc.full = true
         end
     elseif name == "inactivity" then
-        if wc.inactivity == true then global.player[player.index].wc.inactivity = false
-        elseif wc.inactivity == false then global.player[player.index].wc.inactivity = true end
+        if wc.inactivity == true then
+            global.player[player.index].wc.inactivity = false
+        elseif wc.inactivity == false then
+            global.player[player.index].wc.inactivity = true
+        end
     elseif name == "wait_timer" then
-        if wc.wait_timer == true then global.player[player.index].wc.wait_timer = false
-        elseif wc.wait_timer == false then global.player[player.index].wc.wait_timer = true end
+        if wc.wait_timer == true then
+            global.player[player.index].wc.wait_timer = false
+        elseif wc.wait_timer == false then
+            global.player[player.index].wc.wait_timer = true
+        end
     elseif name == "count" then
-        if wc.count == true then global.player[player.index].wc.count = false
-        elseif wc.count == false then global.player[player.index].wc.count = true end
+        if wc.count == true then
+            global.player[player.index].wc.count = false
+        elseif wc.count == false then
+            global.player[player.index].wc.count = true
+        end
     end
 end
 
@@ -313,7 +336,7 @@ script.on_event(defines.events.on_gui_value_changed, function(event)
     local frame = gui.station_frame
     if event.element.name == "inact_slider" then
         global.newpriority[player.surface.name][global.player[player.index].resource][global.player[player.index].id].wc
-            .inact_int = value
+        .inact_int = value
         frame.inact_table.inact_int.text = tostring(value)
     elseif event.element.name == "new_inact_slider" then
         global.player[player.index].wc.inact_int = value
@@ -321,7 +344,7 @@ script.on_event(defines.events.on_gui_value_changed, function(event)
         frame.inact_table.new_inact_int.text = tostring(value)
     elseif event.element.name == "wait_slider" then
         global.newpriority[player.surface.name][global.player[player.index].resource][global.player[player.index].id].wc
-            .wait_int = value
+        .wait_int = value
         frame.rbtable.wait_int.text = tostring(value)
     elseif event.element.name == "new_wait_slider" then
         global.player[player.index].wc.wait_int = value
@@ -380,7 +403,7 @@ script.on_event(defines.events.on_gui_text_changed, function(event)
                 frame = gui.train_publisher
             end
             global.newpublishers[player.surface.name][global.cur_publisher[event.player_index].backer_name][
-                global.cur_publisher[event.player_index].key].proc_priority = value
+            global.cur_publisher[event.player_index].key].proc_priority = value
             frame.proc_table.process_priority.text = tostring(value)
         end
     end
@@ -397,11 +420,12 @@ function find_best_match(station)
     if global.newrequests[surface] == {} then return end
     for keyi, requests in pairs(global.newrequests[surface]) do
         for i, request in pairs(requests) do
-
             if request == nil then table.remove(global.newrequests[surface][keyi], i) end
             if request.backer_name == nil then table.remove(global.newrequests[surface][keyi], i) end
             if request.backer_name ~= keyi then
-                log("request error " .. request.backer_name .. ":" .. keyi .. " removed")
+                if request.backer_name then
+                    log("request error " .. request.backer_name .. ":" .. keyi .. " removed")
+                end
                 table.remove(global.newrequests[surface][keyi], i)
                 for j, pub in pairs(global.newpublishers[surface][keyi]) do
                     pub.backer_name = keyi
@@ -423,7 +447,7 @@ function find_best_match(station)
                 if global.newpriority[surface] and global.newpriority[surface][request.priority.resource.name] and
                     global.newpriority[surface][request.priority.resource.name][request.priority.id.name] then
                     local priority = global.newpriority[surface][request.priority.resource.name][
-                        request.priority.id.name]
+                    request.priority.id.name]
                     --	for j,priority in pairs(global.priority) do
                     --	if (request.priority.name == priority.id.name) and not (request.backer_name == nil) then
                     if priority ~= nil then
@@ -435,22 +459,42 @@ function find_best_match(station)
                                     if reqpri.proc_priority then
                                         --	debugp("found reqpri proc priority")
                                         if reqpri.proc_priority > request.proc_priority then
-                                            reqpri = { proc_priority = request.proc_priority, request = request,
-                                                priority = priority, i = i, tick = request.tick }
+                                            reqpri = {
+                                                proc_priority = request.proc_priority,
+                                                request = request,
+                                                priority = priority,
+                                                i = i,
+                                                tick = request.tick
+                                            }
                                         elseif (
                                             reqpri.tick > request.tick and reqpri.proc_priority == request.proc_priority
                                             ) then
-                                            reqpri = { proc_priority = request.proc_priority, request = request,
-                                                priority = priority, i = i, tick = request.tick }
+                                            reqpri = {
+                                                proc_priority = request.proc_priority,
+                                                request = request,
+                                                priority = priority,
+                                                i = i,
+                                                tick = request.tick
+                                            }
                                         end
                                     else
-                                        reqpri = { proc_priority = request.proc_priority, request = request,
-                                            priority = priority, i = i, tick = request.tick }
+                                        reqpri = {
+                                            proc_priority = request.proc_priority,
+                                            request = request,
+                                            priority = priority,
+                                            i = i,
+                                            tick = request.tick
+                                        }
                                         --	log(backer_name .. "reqpri priority was nil")
                                     end
                                 else
-                                    reqpri = { proc_priority = request.proc_priority, request = request,
-                                        priority = priority, i = i, tick = request.tick }
+                                    reqpri = {
+                                        proc_priority = request.proc_priority,
+                                        request = request,
+                                        priority = priority,
+                                        i = i,
+                                        tick = request.tick
+                                    }
                                     log(backer_name .. "request priority was nil")
                                     --	return reqpri
                                 end
@@ -540,14 +584,18 @@ function on_pre_entity_settings_pasted(event)
         end
         local status, err = pcall(function()
             if source ~= {} and destination ~= {} then
-                global.newpublishers[player.surface.name][destination.backer_name][destination.i] = table.deepcopy(global
+                global.newpublishers[player.surface.name][destination.backer_name][destination.i] = table.deepcopy(
+                    global
                     .newpublishers[player.surface.name][source.backer_name][source.i])
-                global.newpublishers[player.surface.name][destination.backer_name][destination.i].backer_name = destination
+                global.newpublishers[player.surface.name][destination.backer_name][destination.i].backer_name =
+                    destination
                     .backer_name
-                global.newpublishers[player.surface.name][destination.backer_name][destination.i].entity = event.destination
+                global.newpublishers[player.surface.name][destination.backer_name][destination.i].entity = event
+                .destination
                 global.newpublishers[player.surface.name][destination.backer_name][destination.i].request = false
                 if global.newpublishers[player.surface.name][source.backer_name][source.i].proc_priority ~= nil then
-                    global.newpublishers[player.surface.name][destination.backer_name][destination.i].proc_priority = global
+                    global.newpublishers[player.surface.name][destination.backer_name][destination.i].proc_priority =
+                        global
                         .newpublishers[player.surface.name][source.backer_name][source.i].proc_priority
                 else
                     global.newpublishers[player.surface.name][destination.backer_name][destination.i].proc_priority = 50
