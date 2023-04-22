@@ -21,13 +21,13 @@ get_sprite_button = function(player)
     end
     if not button then
         button = button_flow.add
-        {
-            type = "sprite-button",
-            name = "tm_sprite_button",
-            sprite = "train_manager",
-            style = mod_gui.button_style,
-            --      tooltip = {"gui-trainps.button-tooltip"}
-        }
+            {
+                type = "sprite-button",
+                name = "tm_sprite_button",
+                sprite = "train_manager",
+                style = mod_gui.button_style,
+                --      tooltip = {"gui-trainps.button-tooltip"}
+            }
         --   button.style.visible = any
         if player.mod_settings["ps-tooltip"].value == true then
             button.tooltip = { "gui-trainps.button-tooltip" }
@@ -49,13 +49,11 @@ script.on_event(defines.events.on_surface_created, function(event)
 end)
 
 script.on_event(defines.events.on_research_finished, function(event)
-
     if event.research.name == 'train-manager' then
         for _, player in pairs(game.players) do
             get_sprite_button(player)
         end
     end
-
 end)
 
 
@@ -110,7 +108,6 @@ local function on_configuration_changed(modlist)
                     global.trains[train.id] = train
                 end
             end
-
         end
         if modlist.mod_changes["train-pubsub"].old_version < "0.3.13" then
             for _, force in pairs(game.forces) do
@@ -297,7 +294,8 @@ local function gui_open_pubtable(player, search)
                 for n, req in pairs(publishers) do
                     -- requests.add{}
                     local pass = false
-                    if resource_search.elem_value == nil then pass = true
+                    if resource_search.elem_value == nil then
+                        pass = true
                     elseif req.priority.resource ~= nil then
                         if resource_search.elem_value.name == req.priority.resource.name then
                             pass = true
@@ -315,8 +313,10 @@ local function gui_open_pubtable(player, search)
                                     if req.priority.resource.type ~= nil and req.priority.id.type ~= nil then
                                         local resource = requests.add { type = "choose-elem-button",
                                             name = "Resource" .. keyi .. ":" .. n, elem_type = "signal",
-                                            signal = { type = req.priority.resource.type,
-                                                name = req.priority.resource.name } }
+                                            signal = {
+                                                type = req.priority.resource.type,
+                                                name = req.priority.resource.name
+                                            } }
                                         resource.locked = true
                                         if req.priority.id.name == nil then
                                             requests.add { type = "label", caption = " " }
@@ -420,7 +420,10 @@ function gui_open_rqtable(player, search)
                                     rq.add { type = "label", caption = rows.proc_priority }
                                     rq.add { type = "choose-elem-button", name = "Res_Resource" .. keyn .. ":" .. n,
                                         elem_type = "signal",
-                                        signal = { type = rows.priority.resource.type, name = rows.priority.resource.name } }
+                                        signal = {
+                                            type = rows.priority.resource.type,
+                                            name = rows.priority.resource.name
+                                        } }
                                     rq.add { type = "choose-elem-button", name = "Resource" .. keyn .. ":" .. n,
                                         elem_type = "signal",
                                         signal = { type = rows.priority.id.type, name = rows.priority.id.name } }
@@ -497,7 +500,6 @@ local function gui_open_key_frame(player)
         key_s.add { type = "label", caption = k }
         key_s.add { type = "label", caption = subs }
     end
-
 end
 
 local function stationlist(priority)
@@ -531,8 +533,20 @@ function gui_open_station_frame(player, mode)
     if mode == "add" then
         local resource = global.player[player.index].resource.name
         local id = global.player[player.index].id.name
-        wc = { rb_or = true, rb_and = false, inc_ef = true, empty = true, full = false, inactivity = true, inact_int = 5,
-            wait_timer = false, wait_int = 30, count = false, count_amt = 1000, count_ddn = 1 }
+        wc = {
+            rb_or = true,
+            rb_and = false,
+            inc_ef = true,
+            empty = true,
+            full = false,
+            inactivity = true,
+            inact_int = 5,
+            wait_timer = false,
+            wait_int = 30,
+            count = false,
+            count_amt = 1000,
+            count_ddn = 1
+        }
         new = "new_"
     elseif mode == "add+" then
         new = "new_"
@@ -541,9 +555,20 @@ function gui_open_station_frame(player, mode)
         local resource = global.player[player.index].resource
         local id = global.player[player.index].id
         if global.newpriority[surface][resource][id].wc == nil then
-            global.newpriority[surface][resource][id].wc = { rb_or = true, rb_and = false, inc_ef = true, empty = true,
-                full = false, inactivity = true, inact_int = 5, wait_timer = false, wait_int = 30, count = false,
-                count_amt = 1000, count_ddn = 1 }
+            global.newpriority[surface][resource][id].wc = {
+                rb_or = true,
+                rb_and = false,
+                inc_ef = true,
+                empty = true,
+                full = false,
+                inactivity = true,
+                inact_int = 5,
+                wait_timer = false,
+                wait_int = 30,
+                count = false,
+                count_amt = 1000,
+                count_ddn = 1
+            }
         end
         wc = global.newpriority[surface][resource][id].wc
         if wc.count == nil then
@@ -562,7 +587,8 @@ function gui_open_station_frame(player, mode)
     ef_table.add { type = "radiobutton", name = new .. "empty", caption = { "wc.empty" }, state = wc.empty }
     ef_table.add { type = "radiobutton", name = new .. "full", caption = { "wc.full" }, state = wc.full }
     local inact_table = frame.add { type = "table", name = "inact_table", column_count = 2 }
-    inact_table.add { type = "checkbox", name = new .. "inactivity", caption = { "wc.inactivity" }, state = wc.inactivity }
+    inact_table.add { type = "checkbox", name = new .. "inactivity", caption = { "wc.inactivity" }, state = wc
+        .inactivity }
     local inact_int = inact_table.add { type = "textfield", name = new .. "inact_int", caption = { "wc.period" },
         text = wc.inact_int }
     inact_int.style.maximal_width = 40
@@ -574,7 +600,8 @@ function gui_open_station_frame(player, mode)
     local wait_int = rb_table.add { type = "textfield", name = new .. "wait_int", caption = { "wc.wait" },
         text = wc.wait_int, numeric = true, allow_decimal = false, allow_negative = false }
     wait_int.style.maximal_width = 40
-    frame.add { type = "slider", name = new .. "wait_slider", minimum_value = 1, maximum_value = 200, value = wc.wait_int }
+    frame.add { type = "slider", name = new .. "wait_slider", minimum_value = 1, maximum_value = 200, value = wc
+        .wait_int }
 
     local count_table = frame.add { type = "table", name = "count_table", column_count = 3 }
     count_table.add { type = "checkbox", name = new .. "count", caption = { "wc.count_lbl" }, state = wc.count }
@@ -600,13 +627,11 @@ function gui_open_station_frame(player, mode)
         local el_name = resource_search2.name
         dd_list = {}
         for k, v in ipairs(global.player[player.index].list) do
-
             if string.find(v, el_type, nil, true) then
                 if string.find(v, el_name, nil, true) then
                     table.insert(dd_list, v)
                 end
             end
-
         end
     end
 
@@ -701,17 +726,18 @@ function on_gui_elem_changed(event)
     local mod = event.element.get_mod()
     if mod == nil then return end
     if mod ~= "train-pubsub" then return end
-    --	local status,err = pcall(function()
+
     local element = event.element
     local player = game.players[event.player_index]
     global.player[event.player_index] = global.player[event.player_index] or {}
     global.player[event.player_index].resource = global.player[event.player_index].resource or {}
-    -- resource.elem_value = resource.elem_value or {}
     global.player[event.player_index].id = global.player[event.player_index].id or {}
+
     if global.newrequests == nil then
         global.newrequests = {}
         global.newrequests[player.surface.name] = {}
     end
+
     if element.name == "Resource" then
         -- resource = table.deepcopy(element)
         if element.elem_value == nil then
@@ -741,28 +767,36 @@ function on_gui_elem_changed(event)
         end
         --	debugp(event.player_index)
     elseif element.name == "Res_Schema" then
+        local psn = player.surface.name
+        local pidx = player.index
+
         if element.elem_value == nil then
-            if global.newrequests[player.surface.name] ~= nil then
-                if global.newrequests[player.surface.name][global.cur_publisher[player.index].backer_name] ~= nil then
-                    if global.newrequests[player.surface.name][global.cur_publisher[player.index].backer_name][
-                        global.cur_publisher[player.index].key] ~= nil then
-                        global.newrequests[player.surface.name][global.cur_publisher[player.index].backer_name][
-                            global.cur_publisher[player.index].key] = nil
+            if global.newrequests[psn] ~= nil then
+                if global.newrequests[psn][global.cur_publisher[pidx].backer_name] ~= nil then
+                    if global.newrequests[psn][global.cur_publisher[pidx].backer_name][global.cur_publisher[pidx].key] ~= nil then
+                        global.newrequests[psn][global.cur_publisher[pidx].backer_name][global.cur_publisher[pidx].key] = nil
                     end
                 end
             end
-            global.newpublishers[player.surface.name][global.cur_publisher[player.index].backer_name][
-                global.cur_publisher[player.index].key].priority.resource = {}
-            global.newpublishers[player.surface.name][global.cur_publisher[player.index].backer_name][
-                global.cur_publisher[player.index].key].request = false
+            global.newpublishers[psn][global.cur_publisher[pidx].backer_name][global.cur_publisher[pidx].key].priority.resource = {}
+            global.newpublishers[psn][global.cur_publisher[pidx].backer_name][global.cur_publisher[pidx].key].request = false
         else
-            global.newpublishers[player.surface.name][global.cur_publisher[player.index].backer_name][
-                global.cur_publisher[player.index].key].priority.resource = { elem_type = element.elem_type,
-                type = element.elem_value.type, name = element.elem_value.name }
+            -- todo something broke here
+            local cur_pub = global.cur_publisher[pidx]
+            if cur_pub then
+                local cur_pub_name = global.cur_publisher[pidx].backer_name
+                local cur_pub_key = global.cur_publisher[pidx].key
+                if cur_pub_name and cur_pub_key then
+                    global.newpublishers[psn][cur_pub_name][cur_pub_key].priority.resource = {
+                        elem_type = element.elem_type,
+                        type = element.elem_value.type,
+                        name = element.elem_value.name
+                    }
+                end
+            end
         end
         gui_open(player,
-            global.newpublishers[player.surface.name][global.cur_publisher[player.index].backer_name][
-            global.cur_publisher[player.index].key].entity)
+            global.newpublishers[psn][global.cur_publisher[pidx].backer_name][global.cur_publisher[pidx].key].entity)
     elseif element.name == "Schema" then
         if element.elem_value == nil then
             if global.newrequests[player.surface.name] ~= nil then
@@ -770,18 +804,21 @@ function on_gui_elem_changed(event)
                     if global.newrequests[player.surface.name][global.cur_publisher[player.index].backer_name][
                         global.cur_publisher[player.index].key] ~= nil then
                         global.newrequests[player.surface.name][global.cur_publisher[player.index].backer_name][
-                            global.cur_publisher[player.index].key] = nil
+                        global.cur_publisher[player.index].key] = nil
                     end
                 end
             end
             global.newpublishers[player.surface.name][global.cur_publisher[player.index].backer_name][
-                global.cur_publisher[player.index].key].priority.id = {}
+            global.cur_publisher[player.index].key].priority.id = {}
             global.newpublishers[player.surface.name][global.cur_publisher[player.index].backer_name][
-                global.cur_publisher[player.index].key].request = false
+            global.cur_publisher[player.index].key].request = false
         else
             global.newpublishers[player.surface.name][global.cur_publisher[player.index].backer_name][
-                global.cur_publisher[player.index].key].priority.id = { elem_type = element.elem_type,
-                type = element.elem_value.type, name = element.elem_value.name }
+            global.cur_publisher[player.index].key].priority.id = {
+                elem_type = element.elem_type,
+                type = element.elem_value.type,
+                name = element.elem_value.name
+            }
         end
         gui_open(player,
             global.newpublishers[player.surface.name][global.cur_publisher[player.index].backer_name][
@@ -808,7 +845,7 @@ local function on_gui_selection_state_changed(event)
     end
     if element.name == "count_ddn" then
         global.newpriority[player.surface.name][global.player[event.player_index].resource][
-            global.player[event.player_index].id].wc.count_ddn = element.selected_index
+        global.player[event.player_index].id].wc.count_ddn = element.selected_index
         return
     elseif element.name == "new_count_ddn" then
         global.player[player.index].wc.count_ddn = element.selected_index
@@ -829,7 +866,8 @@ local function copy_icon(event)
     local key = global.cur_publisher[player.index].key
 
     global.newpublishers[surface][backer][key].priority.id = global.newpublishers[surface][backer][key].priority.id or {}
-    global.newpublishers[surface][backer][key].priority.id = global.newpublishers[surface][backer][key].priority.resource
+    global.newpublishers[surface][backer][key].priority.id = global.newpublishers[surface][backer][key].priority
+        .resource
 
     gui_open(player, global.newpublishers[surface][backer][key].entity)
 
@@ -916,8 +954,6 @@ local function on_gui_click(event)
             style = mod_gui.frame_style
         }
         gui_open_frame(player)
-
-
     elseif element.name == "subscribe_button" then
         local subtable = gui.sub_table
         if subtable then
@@ -931,7 +967,6 @@ local function on_gui_click(event)
             style = mod_gui.frame_style
         }
         gui_open_subtable(player)
-
     elseif element.name == "publish_button" then
         local pubtable = gui.pub_table
         if pubtable then
@@ -945,7 +980,6 @@ local function on_gui_click(event)
             style = mod_gui.frame_style
         }
         gui_open_pubtable(player)
-
     elseif element.name == "es_button" then
         local estable = gui.es_table
         if estable then
@@ -959,7 +993,6 @@ local function on_gui_click(event)
             style = mod_gui.frame_style
         }
         gui_open_estable(player)
-
     elseif element.name == "rq_button" then
         local rqtable = gui.rq_table
         if rqtable then
@@ -973,7 +1006,6 @@ local function on_gui_click(event)
             style = mod_gui.frame_style
         }
         gui_open_rqtable(player, global.player[player.index].search3)
-
     elseif element.name == "priority_button" then
         local pri_frame = gui.pri_frame
         if pri_frame then
@@ -994,7 +1026,6 @@ local function on_gui_click(event)
         global.player[event.player_index].resource = {}
         global.player[event.player_index].id = {}
         gui_open_pri_frame(player)
-
     elseif element.name == "select_station_button" then
         local station_frame = gui.station_frame
         if station_frame then
@@ -1051,7 +1082,6 @@ local function on_gui_click(event)
         else
             game.players[event.player_index].print({ "errors.resource_id" })
         end
-
     elseif element.name == "tsm_save_station_button" then
         --	game.write_file("presaveglobplayer",serpent.block(global.player),{comment=false})
         local resource = global.player[event.player_index].resource.name
@@ -1071,7 +1101,6 @@ local function on_gui_click(event)
         gui.station_frame.destroy()
         gui_open_pri_frame(player)
         global.player[event.player_index] = {}
-
     elseif element.name == "match_button" then
         local key_frame = gui.key_frame
         if key_frame then
@@ -1085,7 +1114,6 @@ local function on_gui_click(event)
             style = mod_gui.frame_style
         }
         gui_open_key_frame(player)
-
     elseif string.find(element.name, "ps_edit") then
         local station_frame = gui.station_frame
         local player = game.players[event.player_index]
@@ -1130,7 +1158,6 @@ local function on_gui_click(event)
         -- table.insert(list, {"",es.backer_name})
         -- end
         gui_open_station_frame(player, "edit")
-
     elseif string.find(element.name, "ps_delete") then
         local station_frame = gui.station_frame
         if station_frame then
@@ -1174,7 +1201,6 @@ local function on_gui_click(event)
         -- table.insert(list, {"",es.backer_name})
         -- end
         gui_open_station_frame(player, "edit")
-
     elseif string.find(element.name, "ps_remove") then
         if (settings.startup["edit_admin"] and player.admin) or
             (settings.startup["edit_admin"].value == false) then
@@ -1228,7 +1254,6 @@ local function on_gui_click(event)
         else
             player.print({ "errors.admin" })
         end
-
     elseif element.name == "tsm_update_station_button" then
         --debugp("edit")
         local resource = global.player[event.player_index].resource
@@ -1274,7 +1299,6 @@ local function on_gui_click(event)
             gui_open(player, global.newpublishers[player.surface.name][backer_name][cur_pub].entity, true)
             global.player[player.index].pub_edit = element.name
         end
-
     elseif string.find(element.name, "rq_ping") then
         -- local cur_rq = tonumber(string.match(element.name, "%d+"))
         local backer_name, cur_rq = resource_id(element.name, 7)
@@ -1340,7 +1364,6 @@ local function pop_sub_index(backer_name, train_id)
     end
 
     for i, subs in pairs(global.subscriptions) do
-
         if (subs == backer_name and i ~= train_id) then
             global.sub_index[backer_name] = i
             return i
@@ -1351,8 +1374,11 @@ local function pop_sub_index(backer_name, train_id)
     return nil
 end
 
-local filters = { { filter = "name", name = "subscriber-train-stop" }, { filter = "name", name = "publisher-train-stop" },
-    { filter = "name", name = "train-publisher" }, { filter = "name", name = "train-counter" } }
+local filters = {
+    { filter = "name", name = "subscriber-train-stop" },
+    { filter = "name", name = "publisher-train-stop" },
+    { filter = "name", name = "train-publisher" }, { filter = "name", name = "train-counter" },
+}
 
 
 script.on_event(defines.events.on_built_entity, function(event)
@@ -1379,7 +1405,6 @@ script.on_event(defines.events.on_robot_built_entity, function(event)
         if event.created_entity.name == "train-counter" then
             event.created_entity.operable = false
         end
-
     end
 end, filters)
 
@@ -1547,8 +1572,8 @@ script.on_event(defines.events.on_entity_renamed, function(event)
                             local j = #global.newpublishers[entity.surface.name][backer_name] + 1
                             global.newpublishers[entity.surface.name][backer_name][j] = global.newpublishers[
                                 entity.surface.name][backer_name][j] or {}
-                            global.newpublishers[entity.surface.name][backer_name][j] = table.deepcopy(global.newpublishers
-                                [entity.surface.name][event.old_name][i])
+                            global.newpublishers[entity.surface.name][backer_name][j] = table.deepcopy(global
+                                .newpublishers[entity.surface.name][event.old_name][i])
                             global.newpublishers[entity.surface.name][backer_name][j].request = false
                             global.newpublishers[entity.surface.name][backer_name][j].tick = game.tick + 10
                             global.newpublishers[entity.surface.name][event.old_name][i] = nil
@@ -1590,7 +1615,6 @@ script.on_event(defines.events.on_entity_renamed, function(event)
             end
         end
     end
-
 end)
 
 script.on_event(defines.events.on_runtime_mod_setting_changed, function(event)
@@ -1671,7 +1695,6 @@ local function removeFuelStop(train)
     for i, record in pairs(schedule.records) do
         --	if string.find(record.station, "FuelStop")  then
         if string.find(record.station, fs, 1, true) then
-
             table.remove(schedule.records, i)
             if i > #schedule.records then
                 schedule.current = 1
@@ -1726,7 +1749,6 @@ local function on_train_changed_state(event)
 
 
         --	end
-
     elseif event.old_state == defines.train_state.wait_station or
         event.old_state == defines.train_state.manual_control or
         event.old_state == defines.train_state.no_schedule or
@@ -1765,7 +1787,6 @@ local function on_train_changed_state(event)
                     end
                 end
             end
-
         end
         global.subscriptions = global.subscriptions or {}
         if global.subscriptions == {} then return end
@@ -1815,7 +1836,6 @@ local function on_train_changed_state(event)
 end
 
 function gui_open(player, controller, modgui)
-
     debugp(controller.name .. "in gui_open")
     local status, err = pcall(function()
         if controller.name == "train-publisher" then
@@ -1826,9 +1846,16 @@ function gui_open(player, controller, modgui)
                 gui = player.gui.relative
                 frame = gui.train_publisher
                 if frame then frame.destroy() end
-                frame = gui.add({ type = "frame", name = "train_publisher", direction = "vertical",
-                    anchor = { gui = defines.relative_gui_type.lamp_gui, type = "lamp",
-                        position = defines.relative_gui_position.right } })
+                frame = gui.add({
+                    type = "frame",
+                    name = "train_publisher",
+                    direction = "vertical",
+                    anchor = {
+                        gui = defines.relative_gui_type.lamp_gui,
+                        type = "lamp",
+                        position = defines.relative_gui_position.right
+                    }
+                })
             else
                 gui = mod_gui.get_frame_flow(player)
                 frame = gui.train_publisher
@@ -1850,10 +1877,13 @@ function gui_open(player, controller, modgui)
             end
             for keyi, publishers in pairs(global.newpublishers[controller.surface.name]) do
                 for key, publisher in pairs(publishers) do
-
                     if publisher.entity == controller then
-                        local pri_det = frame.add({ type = "table", name = "priority_det", column_count = 3,
-                            direction = "horizontal" })
+                        local pri_det = frame.add({
+                            type = "table",
+                            name = "priority_det",
+                            column_count = 3,
+                            direction = "horizontal"
+                        })
 
                         global.cur_publisher = global.cur_publisher or {}
                         --	global.cur_publisher[player.index] = i
@@ -1865,8 +1895,10 @@ function gui_open(player, controller, modgui)
                         if publisher.priority.resource ~= nil and publisher.priority.resource ~= {} and
                             publisher.priority.resource.type ~= nil then
                             pri_det.add { type = "choose-elem-button", name = "Res_Schema", elem_type = "signal",
-                                signal = { type = publisher.priority.resource.type,
-                                    name = publisher.priority.resource.name } }
+                                signal = {
+                                    type = publisher.priority.resource.type,
+                                    name = publisher.priority.resource.name
+                                } }
                         else
                             pri_det.add { type = "choose-elem-button", name = "Res_Schema", elem_type = "signal" }
                         end
@@ -1894,7 +1926,7 @@ function gui_open(player, controller, modgui)
                         end
                         if pass == true then
                             local priority = table.deepcopy(global.newpriority[controller.surface.name][
-                                publisher.priority.resource.name][publisher.priority.id.name])
+                            publisher.priority.resource.name][publisher.priority.id.name])
                             if frame.StationList then
                                 frame.StationList.destroy()
                             end
@@ -2012,7 +2044,6 @@ function upd_publishers()
                             if publisher.entity.valid == true then
                                 publisher.tick = publisher.tick or 0
                                 if publisher.tick < tick then
-
                                     update = updatePublishers(publisher, keyx, x)
 
                                     --	if updatePublishers(publisher, keyx, x) == true then return end
@@ -2042,7 +2073,6 @@ function circuit_requesters_update()
                 else
                     global.pubstops[i] = nil
                 end
-
             end
         end
     end
@@ -2168,8 +2198,10 @@ function addPSToTable(entity, player_index, event)
         global.newpublishers = global.newpublishers or {}
         local within2 = false
 
-        for _, station in pairs(entity.surface.find_entities_filtered { area = { { x = entity.position.x - 2,
-            y = entity.position.y - 2 }, { x = entity.position.x + 2, y = entity.position.y + 2 } }, type = "train-stop",
+        for _, station in pairs(entity.surface.find_entities_filtered { area = { {
+            x = entity.position.x - 2,
+            y = entity.position.y - 2
+        }, { x = entity.position.x + 2, y = entity.position.y + 2 } }, type = "train-stop",
             name = "publisher-train-stop" }) do
             global.newpublishers[entity.surface.name] = global.newpublishers[entity.surface.name] or {}
             global.newpublishers[entity.surface.name][station.backer_name] = global.newpublishers[entity.surface.name][
@@ -2187,10 +2219,12 @@ function addPSToTable(entity, player_index, event)
             global.newpublishers[entity.surface.name][station.backer_name][i].proc_priority = 50
             global.newpublishers[entity.surface.name][station.backer_name][i].priority = {}
             if event.tags ~= nil and settings.global["full_bp_mode"].value == true then
-                global.newpublishers[entity.surface.name][station.backer_name][i].priority.resource = event.tags.resource
+                global.newpublishers[entity.surface.name][station.backer_name][i].priority.resource = event.tags
+                    .resource
                 global.newpublishers[entity.surface.name][station.backer_name][i].priority.id = event.tags.id
                 global.newpublishers[entity.surface.name][station.backer_name][i].hide = event.tags.hide
-                global.newpublishers[entity.surface.name][station.backer_name][i].proc_priority = event.tags.proc_priority
+                global.newpublishers[entity.surface.name][station.backer_name][i].proc_priority = event.tags
+                    .proc_priority
             end
             global.newpublishers[entity.surface.name][station.backer_name][i].request = false
             global.newpublishers[entity.surface.name][station.backer_name][i].tick = 0
@@ -2199,10 +2233,17 @@ function addPSToTable(entity, player_index, event)
             within2 = true
             -- debugp("Publisher found at" .. station.backer_name)
         end
-        for _, station in pairs(entity.surface.find_entities_filtered { area = { { x = entity.position.x - 2,
-            y = entity.position.y - 2 },
-            { x = entity.position.x + 2, y = entity.position.y + 2, type = "entity-ghost", ghost_type = "train-stop",
-                ghost_name = "publisher-train-stop" } } }) do
+        for _, station in pairs(entity.surface.find_entities_filtered { area = { {
+            x = entity.position.x - 2,
+            y = entity.position.y - 2
+        },
+            {
+                x = entity.position.x + 2,
+                y = entity.position.y + 2,
+                type = "entity-ghost",
+                ghost_type = "train-stop",
+                ghost_name = "publisher-train-stop"
+            } } }) do
             --	game.print("type " .. station.type .. " : name " .. station.name)
             if station.type == "entity-ghost" and station.ghost_type == "train-stop" and
                 station.ghost_name == "publisher-train-stop" then
@@ -2260,8 +2301,10 @@ function addPSToTable(entity, player_index, event)
         --	game.print("New counter")
         global.newcounters = global.newcounters or {}
         global.newcounters[entity.surface.name] = global.newcounters[entity.surface.name] or {}
-        for _, station in pairs(entity.surface.find_entities_filtered { area = { { x = entity.position.x - 2,
-            y = entity.position.y - 2 }, { x = entity.position.x + 2, y = entity.position.y + 2 } }, type = "train-stop" }) do
+        for _, station in pairs(entity.surface.find_entities_filtered { area = { {
+            x = entity.position.x - 2,
+            y = entity.position.y - 2
+        }, { x = entity.position.x + 2, y = entity.position.y + 2 } }, type = "train-stop" }) do
             local control = entity.get_or_create_control_behavior()
             control.parameters = nil
             table.insert(global.newcounters[entity.surface.name],
@@ -2282,8 +2325,10 @@ function addPSToTable(entity, player_index, event)
         global.newpublishers[entity.surface.name] = global.newpublishers[entity.surface.name] or {}
         -- check for train-publishers in range
         local pub_record_exists = false
-        for _, publisher in pairs(entity.surface.find_entities_filtered { area = { { x = entity.position.x - 3,
-            y = entity.position.y - 3 }, { x = entity.position.x + 3, y = entity.position.y + 3 } },
+        for _, publisher in pairs(entity.surface.find_entities_filtered { area = { {
+            x = entity.position.x - 3,
+            y = entity.position.y - 3
+        }, { x = entity.position.x + 3, y = entity.position.y + 3 } },
             name = "train-publisher" }) do
             --	game.print("publisher found" .. publisher.unit_number)
             --	game.print(entity.unit_number)
@@ -2301,8 +2346,10 @@ function addPSToTable(entity, player_index, event)
                             entity.surface.name][entity.backer_name] or {}
                         local i = #global.newpublishers[entity.surface.name][entity.backer_name] + 1
                         global.newpublishers[entity.surface.name][entity.backer_name][i] = {}
-                        global.newpublishers[entity.surface.name][entity.backer_name][i] = table.deepcopy(existing_requester)
-                        global.newpublishers[entity.surface.name][entity.backer_name][i].backer_name = entity.backer_name
+                        global.newpublishers[entity.surface.name][entity.backer_name][i] = table.deepcopy(
+                            existing_requester)
+                        global.newpublishers[entity.surface.name][entity.backer_name][i].backer_name = entity
+                            .backer_name
                         pub_record_exists = true
                         table.remove(global.newpublishers[entity.surface.name][" "], j)
                     end
@@ -2312,15 +2359,17 @@ function addPSToTable(entity, player_index, event)
             if global.newpublishers[entity.surface.name][tostring(publisher.unit_number)] ~= nil then
                 if global.newpublishers[entity.surface.name][tostring(publisher.unit_number)] ~= {} then
                     for j, existing_requester in pairs(global.newpublishers[entity.surface.name][
-                        tostring(publisher.unit_number)]) do
+                    tostring(publisher.unit_number)]) do
                         if existing_requester.entity == publisher then
                             --	game.print("Existing requester found")
                             global.newpublishers[entity.surface.name][entity.backer_name] = global.newpublishers[
                                 entity.surface.name][entity.backer_name] or {}
                             local i = #global.newpublishers[entity.surface.name][entity.backer_name] + 1
                             global.newpublishers[entity.surface.name][entity.backer_name][i] = {}
-                            global.newpublishers[entity.surface.name][entity.backer_name][i] = table.deepcopy(existing_requester)
-                            global.newpublishers[entity.surface.name][entity.backer_name][i].backer_name = entity.backer_name
+                            global.newpublishers[entity.surface.name][entity.backer_name][i] = table.deepcopy(
+                                existing_requester)
+                            global.newpublishers[entity.surface.name][entity.backer_name][i].backer_name = entity
+                                .backer_name
                             pub_record_exists = true
                             table.remove(global.newpublishers[entity.surface.name][tostring(publisher.unit_number)], j)
                         end
@@ -2394,7 +2443,6 @@ function addPSToTable(entity, player_index, event)
                 --	debugp(gh.name .. gh.ghost_name .. gh.position.x .. gh.position.y)
                 ghost.revive()
                 --local new_entity = ghost.revive()[2]
-
             else
                 local new_entity = entity.surface.create_entity { name = "train-counter", position = { x, y },
                     force = entity.force, fast_replace = true }
@@ -2485,8 +2533,10 @@ function removePSFromTable(entity)
             end
         end
         --debugp("attempt to find counter element X"  .. entity.position.x  ..  " Y "  ..  entity.position.y)
-        for i, counter in pairs(entity.surface.find_entities_filtered { area = { { x = entity.position.x - 2,
-            y = entity.position.y - 2 }, { x = entity.position.x + 2, y = entity.position.y + 2 } },
+        for i, counter in pairs(entity.surface.find_entities_filtered { area = { {
+            x = entity.position.x - 2,
+            y = entity.position.y - 2
+        }, { x = entity.position.x + 2, y = entity.position.y + 2 } },
             name = "train-counter" }) do
             counter.destroy()
             --global.counters[i] = nil
@@ -2505,7 +2555,7 @@ function removePSFromTable(entity)
                             or {}
                         local j = #global.newpublishers[entity.surface.name][" "] + 1
                         global.newpublishers[entity.surface.name][" "][j] = table.deepcopy(global.newpublishers[
-                            entity.surface.name][entity.backer_name][i])
+                        entity.surface.name][entity.backer_name][i])
                         global.newpublishers[entity.surface.name][entity.backer_name][i] = nil
                         if global.newrequests then
                             if global.newrequests[entity.surface.name] ~= nil then
@@ -2607,7 +2657,6 @@ function check_req(station, train)
             end
             checkreq = true
             return
-
         else
             checkreq = false
             return
@@ -2616,7 +2665,6 @@ function check_req(station, train)
         checkreq = false
         return
     end
-
 end
 
 function check_train_in_Sub_station(station)
@@ -2718,8 +2766,12 @@ local function match_req(publisher, backer_name, x)
                         else
                             if counter.entity.valid == true then
                                 local do_delete = true
-                                for _, stationx in pairs(counter.entity.surface.find_entities_filtered { area = { { x = counter
-                                    .entity.position.x - 2, y = counter.entity.position.y - 2 },
+                                for _, stationx in pairs(counter.entity.surface.find_entities_filtered { area = {
+                                    {
+                                        x = counter
+                                            .entity.position.x - 2,
+                                        y = counter.entity.position.y - 2
+                                    },
                                     { x = counter.entity.position.x + 2, y = counter.entity.position.y + 2 } },
                                     type = "train-stop", name = "publisher-train-stop" }) do
                                     counter.station = stationx
@@ -2814,7 +2866,6 @@ function updatePublishers(publisher, backer_name, x)
     end
 
     if publisher.request then
-
         if global.newrequests[surface][backer_name] ~= nil then -- Experimental
             for _, request in pairs(global.newrequests[surface][backer_name]) do
                 if publisher.priority.resource.name == request.priority.resource.name and
@@ -2827,10 +2878,10 @@ function updatePublishers(publisher, backer_name, x)
 
 
             --	return false
-        else -- Experimental
+        else                          -- Experimental
             log("Revoking false Existing request " .. publisher.backer_name)
             publisher.request = false -- Experimental
-        end -- Experimental
+        end                           -- Experimental
     end
 
     --	if not publisher.enabled then
@@ -2893,7 +2944,6 @@ function update_circuit_requesters(requester_stop)
                 --	requester_stop.surface.print("TSM: " .. requester_stop.backer_name .. " requests " .. signal.signal.name)
                 if global.newpriority[surface][signal.signal.name] ~= nil then
                     if global.newpriority[surface][signal.signal.name][signal.signal.name] ~= nil then
-
                         local priority = global.newpriority[surface][signal.signal.name][signal.signal.name]
 
                         if not priority.station then return false end
@@ -2929,8 +2979,10 @@ function update_circuit_requesters(requester_stop)
                         global.direct_out[surface][signal.signal.name] = global.direct_out[surface][signal.signal.name]
                             or {}
                         global.direct_out[surface][signal.signal.name][
-                            #global.direct_out[surface][signal.signal.name] + 1] = { entity = requester_stop,
-                            signal = signal }
+                        #global.direct_out[surface][signal.signal.name] + 1] = {
+                            entity = requester_stop,
+                            signal = signal
+                        }
                     end
                 end
             end
@@ -2954,8 +3006,12 @@ function updateCounters(counter, dbp)
             local localstop = counter.station
 
             if localstop.valid == false then
-                for _, stationx in pairs(counter.entity.surface.find_entities_filtered { area = { { x = counter.entity.position
-                    .x - 2, y = counter.entity.position.y - 2 },
+                for _, stationx in pairs(counter.entity.surface.find_entities_filtered { area = {
+                    {
+                        x = counter.entity.position
+                            .x - 2,
+                        y = counter.entity.position.y - 2
+                    },
                     { x = counter.entity.position.x + 2, y = counter.entity.position.y + 2 } }, type = "train-stop",
                     name = "publisher-train-stop" }) do
                     counter.station = stationx
@@ -2975,9 +3031,11 @@ function updateCounters(counter, dbp)
                     traincount = traincount + 1
                     if global.train_res[train.id] ~= nil then
                         res_count[global.train_res[train.id].name] = res_count[global.train_res[train.id].name] or {}
-                        res_count[global.train_res[train.id].name].count = res_count[global.train_res[train.id].name].count
+                        res_count[global.train_res[train.id].name].count = res_count[global.train_res[train.id].name]
+                            .count
                             or 0
-                        res_count[global.train_res[train.id].name].count = res_count[global.train_res[train.id].name].count
+                        res_count[global.train_res[train.id].name].count = res_count[global.train_res[train.id].name]
+                            .count
                             + 1
                         res_count[global.train_res[train.id].name].type = global.train_res[train.id].type
                     end
@@ -2987,9 +3045,11 @@ function updateCounters(counter, dbp)
                     if global.train_res[train.id] ~= nil then
                         --	game.print("Not nil")
                         res_count[global.train_res[train.id].name] = res_count[global.train_res[train.id].name] or {}
-                        res_count[global.train_res[train.id].name].count = res_count[global.train_res[train.id].name].count
+                        res_count[global.train_res[train.id].name].count = res_count[global.train_res[train.id].name]
+                            .count
                             or 0
-                        res_count[global.train_res[train.id].name].count = res_count[global.train_res[train.id].name].count
+                        res_count[global.train_res[train.id].name].count = res_count[global.train_res[train.id].name]
+                            .count
                             + 1
                         res_count[global.train_res[train.id].name].type = global.train_res[train.id].type
                     end
@@ -2999,9 +3059,11 @@ function updateCounters(counter, dbp)
                     traincount = traincount + 1
                     if global.train_res[train.id] ~= nil then
                         res_count[global.train_res[train.id].name] = res_count[global.train_res[train.id].name] or {}
-                        res_count[global.train_res[train.id].name].count = res_count[global.train_res[train.id].name].count
+                        res_count[global.train_res[train.id].name].count = res_count[global.train_res[train.id].name]
+                            .count
                             or 0
-                        res_count[global.train_res[train.id].name].count = res_count[global.train_res[train.id].name].count
+                        res_count[global.train_res[train.id].name].count = res_count[global.train_res[train.id].name]
+                            .count
                             + 1
                         res_count[global.train_res[train.id].name].type = global.train_res[train.id].type
                     end
@@ -3009,23 +3071,26 @@ function updateCounters(counter, dbp)
             end
             -- end
 
-            cb.set_signal(1, { signal = {
-                type = "virtual",
-                name = "train-counter"
-            },
-                count = traincount }
+            cb.set_signal(1, {
+                signal = {
+                    type = "virtual",
+                    name = "train-counter"
+                },
+                count = traincount
+            }
             )
             i = 2
             for key, resource in pairs(res_count) do
-                cb.set_signal(i, { signal = {
-                    type = resource.type,
-                    name = key
-                },
-                    count = resource.count }
+                cb.set_signal(i, {
+                    signal = {
+                        type = resource.type,
+                        name = key
+                    },
+                    count = resource.count
+                }
                 )
                 i = i + 1
             end
-
         end
     end)
     if not status then
@@ -3090,14 +3155,12 @@ script.on_event(defines.events.on_train_created, function(event)
             global.train_res[event.train.id] = { name = name, type = "item" }
             break
         end
-
     elseif event.train.get_fluid_contents() ~= nil then
         for name, content in pairs(event.train.get_fluid_contents()) do
             global.train_res[event.train.id] = global.train_res[event.train.id] or {}
             global.train_res[event.train.id] = { name = name, type = "fluid" }
             break
         end
-
     end
     if event.old_train_id_1 then
         --	global.train_res[event.train.id] = global.train_res[event.old_train_id_1]
@@ -3399,11 +3462,9 @@ commands.add_command(
                 end
             end
         end
-
     end
 )
 commands.add_command("tsm_garbage", { "reset_help" }, function(event)
-
     --	for surface,publishers in pairs(global.newpublishers) do
     --		for backer_name,pubs in pairs(publishers) do
     local surface = "nauvis"
