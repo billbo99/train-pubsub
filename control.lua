@@ -1300,11 +1300,10 @@ local function on_gui_click(event)
             global.player[player.index].pub_edit = element.name
         end
     elseif string.find(element.name, "rq_ping") then
-        -- local cur_rq = tonumber(string.match(element.name, "%d+"))
         local backer_name, cur_rq = resource_id(element.name, 7)
         cur_rq = tonumber(cur_rq)
         local surface = player.surface.name
-        if global.newrequests[surface][backer_name][cur_rq] then
+        if surface and backer_name and cur_rq and global.newrequests[surface][backer_name] and global.newrequests[surface][backer_name][cur_rq] then
             if global.newrequests[surface][backer_name][cur_rq].entity.valid == true then
                 local rq = global.newrequests[surface][backer_name][cur_rq].entity
                 map_ping(player, rq.position.x, rq.position.y, backer_name)
