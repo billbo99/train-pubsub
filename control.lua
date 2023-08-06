@@ -1135,7 +1135,7 @@ local function on_gui_click(event)
         resource, id = resource_id(element.name, 7)
         global.player[event.player_index].resource = resource
         global.player[event.player_index].id = id
-        if global.newpriority[player.surface.name][resource][id].station then
+        if global.newpriority[player.surface.name] and global.newpriority[player.surface.name][resource] and global.newpriority[player.surface.name][resource][id] and global.newpriority[player.surface.name][resource][id].station then
             for _, stationX in ipairs(global.newpriority[player.surface.name][resource][id].station) do
                 global.player[event.player_index].station[#global.player[event.player_index].station + 1] = stationX
                 --	table.insert(station,StationX)
@@ -2605,7 +2605,9 @@ function check_req(station, train)
     if reqpri ~= {} then
         if reqpri.request ~= nil then
             if global.newpublishers[surface][reqpri.request.backer_name] == nil then
-                table.remove(global.newrequests[surface][reqpri.request.backer_name], reqpri.i)
+                if global.newrequests[surface] and global.newrequests[surface][reqpri.request.backer_name] then
+                    table.remove(global.newrequests[surface][reqpri.request.backer_name], reqpri.i)
+                end
                 checkreq = false
                 return
             end
