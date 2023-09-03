@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.19
+Date: 2023/09/03
+  Uploaded By:
+    - billbo99
+  Bugfixes:
+    - train-pubsub/control.lua:1295: attempt to index field '?' (a nil value)
+    - train-pubsub/control.lua:1299: attempt to index field '?' (a nil value)
+    - Bug appears to be caused by Requester lights being removed
+---------------------------------------------------------------------------------------------------
 Version: 1.1.18
 Date: 2023/08/06
   Uploaded By:

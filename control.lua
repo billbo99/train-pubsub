@@ -1292,12 +1292,16 @@ local function on_gui_click(event)
                 gui_close(player, global.newpublishers[player.surface.name][backer_name][cur_pub].entity)
                 global.player[player.index].pub_edit = nil
             else
+                if backer_name and cur_pub then
+                    gui_open(player, global.newpublishers[player.surface.name][backer_name][cur_pub].entity, true)
+                    global.player[player.index].pub_edit = element.name
+                end
+            end
+        else
+            if backer_name and cur_pub then
                 gui_open(player, global.newpublishers[player.surface.name][backer_name][cur_pub].entity, true)
                 global.player[player.index].pub_edit = element.name
             end
-        else
-            gui_open(player, global.newpublishers[player.surface.name][backer_name][cur_pub].entity, true)
-            global.player[player.index].pub_edit = element.name
         end
     elseif string.find(element.name, "rq_ping") then
         local backer_name, cur_rq = resource_id(element.name, 7)
