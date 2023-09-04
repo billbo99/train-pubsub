@@ -2067,21 +2067,12 @@ function upd_publishers()
 end
 
 function circuit_requesters_update()
-    local tick = game.tick
     global.direct_out = {}
     if global.pubstops ~= nil then
         if global.pubstops ~= {} then
             for i, requester_stop in pairs(global.pubstops) do
                 if requester_stop.entity.valid == true then
-                    requester_stop.tick = requester_stop.tick or 0
-                    if requester_stop.tick < tick then
-                        update_circuit_requesters(requester_stop.entity)
-                        if settings.global['turbo_ups'].value == false then
-                            requester_stop.tick = game.tick + 58
-                        else
-                            requester_stop.tick = game.tick + 311
-                        end
-                    end
+                    update_circuit_requesters(requester_stop.entity)
                 else
                     global.pubstops[i] = nil
                 end
@@ -3006,60 +2997,61 @@ function update_circuit_requesters(requester_stop)
                 -- Find dual icon priority
                 --	requester_stop.surface.print("TSM: " .. requester_stop.backer_name .. " requests " .. signal.signal.name)
                 signal_name = signal.signal.name
-                if global.newpriority[surface][signal_name] ~= nil then
-                    if global.newpriority[surface][signal_name][signal_name] ~= nil then
-                        local priority = global.newpriority[surface][signal_name][signal_name]
-                        if not priority.station then return false end
+                if (global.newpriority[surface] ~= nil and
+                    global.newpriority[surface][signal_name] ~= nil and
+                    global.newpriority[surface][signal_name][signal_name] ~= nil) then
+                    local priority = global.newpriority[surface][signal_name][signal_name]
+                    if not priority.station then return false end
 
-                        -- If there is already a pending request, skip and trigger from the subscriber side.
-                        local already_requested = false
-                        if global.newrequests[surface][backer_name] ~= nil then
-                            for _, request in pairs(global.newrequests[surface][backer_name]) do
-                                if signal_name == request.priority.resource.name and
-                                 signal_name == request.priority.id.name then
-                                   already_requested = true
-                                   break
-                                end
+                    local already_requested = false
+                    if global.newrequests[surface][backer_name] ~= nil then
+                        for _, request in pairs(global.newrequests[surface][backer_name]) do
+                            if signal_name == request.priority.resource.name and
+                                signal_name == request.priority.id.name then
+                                already_requested = true
+                                break
                             end
                         end
+                    end
 
-                        -- Try direct dispatch for new signals
-                        local dispatched = false
-                        if not already_requested then
-                            dispatched = try_direct_dispatch(requester_stop, priority)
-                        end
+                    -- If there is already a pending request, skip and trigger
+                    -- from the subscriber side. Otherwise, try direct dispatch
+                    -- for new signals
+                    local dispatched = false
+                    if not already_requested then
+                        dispatched = try_direct_dispatch(requester_stop, priority)
+                    end
 
-                        if dispatched then
-                            return  -- suggested by leeh
-                        end
+                    if dispatched then
+                        return  -- suggested by leeh
+                    end
 
-                        if not already_requested then
-                            -- No trains avaialble, add a request.
-                            local signal_publisher = {
-                                direct_request = true,
-                                request = true,
-                                backer_name=backer_name,
-                                proc_priority = 50,
-                                tick=game.tick,
-                                priority=priority,
-                                entity=requester_stop,
+                    -- No trains avaialble, add a request.
+                    if not already_requested then
+                        local signal_publisher = {
+                            direct_request = true,
+                            request = true,
+                            backer_name=backer_name,
+                            proc_priority = 50,
+                            tick=game.tick,
+                            priority=priority,
+                            entity=requester_stop,
+                        }
+                        global.newrequests[surface][backer_name] = global.newrequests[surface][backer_name] or {}
+                        local i = #global.newrequests[surface][backer_name] + 1
+                        global.newrequests[surface][backer_name][i] = signal_publisher
+                        --[[
+                            -- no trains - write oustanding record
+                            global.direct_out = global.direct_out or {}
+                            global.direct_out[surface] = global.direct_out[surface] or {}
+                            global.direct_out[surface][signal.signal.name] = global.direct_out[surface][signal.signal.name]
+                                or {}
+                            global.direct_out[surface][signal.signal.name][
+                            #global.direct_out[surface][signal.signal.name] + 1] = {
+                                entity = requester_stop,
+                                signal = signal
                             }
-                            global.newrequests[surface][backer_name] = global.newrequests[surface][backer_name] or {}
-                            local i = #global.newrequests[surface][backer_name] + 1
-                            global.newrequests[surface][backer_name][i] = signal_publisher
-                            --[[
-                                -- no trains - write oustanding record
-                                global.direct_out = global.direct_out or {}
-                                global.direct_out[surface] = global.direct_out[surface] or {}
-                                global.direct_out[surface][signal.signal.name] = global.direct_out[surface][signal.signal.name]
-                                    or {}
-                                global.direct_out[surface][signal.signal.name][
-                                #global.direct_out[surface][signal.signal.name] + 1] = {
-                                    entity = requester_stop,
-                                    signal = signal
-                                }
-                            --]]
-                        end
+                        --]]
                     end
                 end
             end
