@@ -2622,34 +2622,53 @@ function check_req(station, train)
             -- 	checkreq = false
             -- 	return
             -- end
-            for k, publisher in pairs(global.newpublishers[surface][reqpri.request.backer_name]) do
-                if reqpri.request.entity == publisher.entity then
-                    if check_unique(station.surface, reqpri.request.backer_name) == false then
-                        destination_error(station.surface, reqpri.request.backer_name)
-                        publisher.request = false
-                        if global.newrequests[surface][reqpri.request.backer_name] ~= nil then
-                            table.remove(global.newrequests[surface][reqpri.request.backer_name], reqpri.i)
-                        end
-                        station.surface.print(reqpri.request.backer_name)
-                        checkreq = false
-                        return
-                    end
+
+            -- Handle if the request is from a direct connection.
+            if reqpri.request.direct_request then
+                if check_unique(station.surface, reqpri.request.backer_name) == false then
+                    destination_error(station.surface, reqpri.request.backer_name)
                     if global.newrequests[surface][reqpri.request.backer_name] ~= nil then
                         table.remove(global.newrequests[surface][reqpri.request.backer_name], reqpri.i)
                     end
-                    publisher.request = false
-                    if publisher.entity.get_or_create_control_behavior().disabled then
-                        --	game.print("disabled")
-                        checkreq = false
-                        check_req(station, train)
-                        if checkreq == false then
-                            push_sub_index(station, train)
+                    station.surface.print(reqpri.request.backer_name)
+                    checkreq = false
+                    return
+                end
+                if global.newrequests[surface][reqpri.request.backer_name] ~= nil then
+                    table.remove(global.newrequests[surface][reqpri.request.backer_name], reqpri.i)
+                end
+                -- Will always schedule even if the signal is no longer activate.
+                build_schedule(train, reqpri.request.backer_name, reqpri.priority)
+            else
+                for k, publisher in pairs(global.newpublishers[surface][reqpri.request.backer_name]) do
+                    if reqpri.request.entity == publisher.entity then
+                        if check_unique(station.surface, reqpri.request.backer_name) == false then
+                            destination_error(station.surface, reqpri.request.backer_name)
+                            publisher.request = false
+                            if global.newrequests[surface][reqpri.request.backer_name] ~= nil then
+                                table.remove(global.newrequests[surface][reqpri.request.backer_name], reqpri.i)
+                            end
+                            station.surface.print(reqpri.request.backer_name)
+                            checkreq = false
+                            return
                         end
-                    else
-                        --	game.print("enabled")
-                        build_schedule(train, reqpri.request.backer_name, reqpri.priority)
+                        if global.newrequests[surface][reqpri.request.backer_name] ~= nil then
+                            table.remove(global.newrequests[surface][reqpri.request.backer_name], reqpri.i)
+                        end
+                        publisher.request = false
+                        if publisher.entity.get_or_create_control_behavior().disabled then
+                            --	game.print("disabled")
+                            checkreq = false
+                            check_req(station, train)
+                            if checkreq == false then
+                                push_sub_index(station, train)
+                            end
+                        else
+                            --	game.print("enabled")
+                            build_schedule(train, reqpri.request.backer_name, reqpri.priority)
+                        end
+                        break
                     end
-                    break
                 end
             end
 
@@ -2936,58 +2955,103 @@ function updatePublishers(publisher, backer_name, x)
     return false
 end
 
+local function try_direct_dispatch(requester_stop, priority)
+    for _, station in ipairs(priority.station) do
+        if station ~= "" then
+            -- check that sub_index is in station, else pop and try again
+            --	local train = global.trains[global.sub_index[ station[2] ]]
+            train_t = nil
+            check_train_in_Sub_station(station[2])
+
+            if train_t ~= nil then
+                local train = global.trains[train_t]
+
+                if train ~= {} then
+                    build_schedule(train, requester_stop.backer_name, priority)
+                    pop_sub_index(station[2], global.sub_index[station[2]])
+                    for _, counter in pairs(global.newcounters[requester_stop.surface.name]) do
+                        --debugp(counter.backer_name .. " : " .. publisher.backer_name)
+                        if counter.backer_name == requester_stop.backer_name then
+                            --	debugp(counter.backer_name .. " : " .. publisher.backer_name)
+                            updateCounters(counter, 1)
+                            return true
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return false
+end
+
 function update_circuit_requesters(requester_stop)
     local surface = requester_stop.surface.name
     local signals = requester_stop.get_merged_signals()
     --	game.print(requester_stop.backer_name)
     if signals == nil then return end
     if global.newpriority == nil then return end
+    local backer_name = requester_stop.backer_name
     for _, signal in pairs(signals) do
         if signal.count < 0 then
             if signal.signal.type ~= "virtual" then
                 -- Find dual icon priority
                 --	requester_stop.surface.print("TSM: " .. requester_stop.backer_name .. " requests " .. signal.signal.name)
-                if global.newpriority[surface][signal.signal.name] ~= nil then
-                    if global.newpriority[surface][signal.signal.name][signal.signal.name] ~= nil then
-                        local priority = global.newpriority[surface][signal.signal.name][signal.signal.name]
+                signal_name = signal.signal.name
+                if (global.newpriority[surface] ~= nil and
+                    global.newpriority[surface][signal_name] ~= nil and
+                    global.newpriority[surface][signal_name][signal_name] ~= nil) then
+                    local priority = global.newpriority[surface][signal_name][signal_name]
+                    if not priority.station then return false end
 
-                        if not priority.station then return false end
-
-                        for _, station in ipairs(priority.station) do
-                            if station ~= "" then
-                                -- check that sub_index is in station, else pop and try again
-                                --	local train = global.trains[global.sub_index[ station[2] ]]
-                                train_t = nil
-                                check_train_in_Sub_station(station[2])
-
-                                if train_t ~= nil then
-                                    local train = global.trains[train_t]
-
-                                    if train ~= {} then
-                                        build_schedule(train, requester_stop.backer_name, priority)
-                                        pop_sub_index(station[2], global.sub_index[station[2]])
-                                        for _, counter in pairs(global.newcounters[surface]) do
-                                            --debugp(counter.backer_name .. " : " .. publisher.backer_name)
-                                            if counter.backer_name == requester_stop.backer_name then
-                                                --	debugp(counter.backer_name .. " : " .. publisher.backer_name)
-                                                updateCounters(counter, 1)
-                                                return -- suggested by leeh
-                                            end
-                                        end
-                                    end
-                                end
+                    local already_requested = false
+                    if global.newrequests[surface][backer_name] ~= nil then
+                        for _, request in pairs(global.newrequests[surface][backer_name]) do
+                            if signal_name == request.priority.resource.name and
+                                signal_name == request.priority.id.name then
+                                already_requested = true
+                                break
                             end
                         end
-                        -- no trains - write oustanding record
-                        global.direct_out = global.direct_out or {}
-                        global.direct_out[surface] = global.direct_out[surface] or {}
-                        global.direct_out[surface][signal.signal.name] = global.direct_out[surface][signal.signal.name]
-                            or {}
-                        global.direct_out[surface][signal.signal.name][
-                        #global.direct_out[surface][signal.signal.name] + 1] = {
-                            entity = requester_stop,
-                            signal = signal
+                    end
+
+                    -- If there is already a pending request, skip and trigger
+                    -- from the subscriber side. Otherwise, try direct dispatch
+                    -- for new signals
+                    local dispatched = false
+                    if not already_requested then
+                        dispatched = try_direct_dispatch(requester_stop, priority)
+                    end
+
+                    if dispatched then
+                        return  -- suggested by leeh
+                    end
+
+                    -- No trains avaialble, add a request.
+                    if not already_requested then
+                        local signal_publisher = {
+                            direct_request = true,
+                            request = true,
+                            backer_name=backer_name,
+                            proc_priority = 50,
+                            tick=game.tick,
+                            priority=priority,
+                            entity=requester_stop,
                         }
+                        global.newrequests[surface][backer_name] = global.newrequests[surface][backer_name] or {}
+                        local i = #global.newrequests[surface][backer_name] + 1
+                        global.newrequests[surface][backer_name][i] = signal_publisher
+                        --[[
+                            -- no trains - write oustanding record
+                            global.direct_out = global.direct_out or {}
+                            global.direct_out[surface] = global.direct_out[surface] or {}
+                            global.direct_out[surface][signal.signal.name] = global.direct_out[surface][signal.signal.name]
+                                or {}
+                            global.direct_out[surface][signal.signal.name][
+                            #global.direct_out[surface][signal.signal.name] + 1] = {
+                                entity = requester_stop,
+                                signal = signal
+                            }
+                        --]]
                     end
                 end
             end
