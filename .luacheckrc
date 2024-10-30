@@ -33,9 +33,9 @@
 -------------------------------------------------------------------------------
 --[Set Defaults]--
 -------------------------------------------------------------------------------
-local LINE_LENGTH = false -- It is 2017 limits on length are a waste
-local IGNORE = {'21./%w+_$', '21./^_%w+$', '213/[ijk]', '213/index', '213/key'}
-local NOT_GLOBALS = {'coroutine', 'io', 'socket', 'dofile', 'loadfile'} -- These globals are not available to the factorio API
+local LINE_LENGTH = false                                               -- It is 2017 limits on length are a waste
+local IGNORE = { '21./%w+_$', '21./^_%w+$', '213/[ijk]', '213/index', '213/key' }
+local NOT_GLOBALS = { 'coroutine', 'io', 'socket', 'dofile', 'loadfile' } -- These globals are not available to the factorio API
 
 local STD_CONTROL = 'lua52c+factorio+factorio_control+stdlib+factorio_defines'
 local STD_DATA = 'lua52c+factorio+factorio_data+stdlib+stdlib_data+factorio_defines'
@@ -85,7 +85,7 @@ files['**/settings-updates.lua'].std = STD_DATA
 files['**/settings-final-fixes.lua'].std = STD_DATA
 files['**/prototypes/'].std = STD_DATA
 files['**/settings/'].std = STD_DATA
-files['**/love/'] = {std = STD_LOVE, globals = {'coroutine', 'io', 'socket', 'dofile', 'loadfile'}}
+files['**/love/'] = { std = STD_LOVE, globals = { 'coroutine', 'io', 'socket', 'dofile', 'loadfile' } }
 
 -------------------------------------------------------------------------------
 --[Base]--
@@ -95,32 +95,32 @@ files['**/love/'] = {std = STD_LOVE, globals = {'coroutine', 'io', 'socket', 'do
 local base_scenarios = {
     std = STD_BASE_CONTROL .. '+factorio_base_scenarios+factorio_base_story',
     --ignore = {'212/event', '111', '112', '113', '211', '212', '213', '311', '411', '412', '421', '422', '423', '431', '432', '512'}
-    ignore = {'...'}
+    ignore = { '...' }
 }
 files['**/base/scenarios/'] = base_scenarios
 files['**/base/tutorials/'] = base_scenarios
 files['**/base/campaigns/'] = base_scenarios
 files['**/wip-scenario/'] = base_scenarios
 
-files['**/base/migrations/'] = {std = STD_BASE_CONTROL}
+files['**/base/migrations/'] = { std = STD_BASE_CONTROL }
 
-files['**/core/lualib/'] = {std = STD_BASE_CONTROL}
-files['**/core/lualib/util.lua'] = {globals = {'util', 'table'}, ignore = {'432/object'}}
-files['**/core/lualib/silo-script.lua'] = {globals = {'silo_script'}, ignore = {'4../player'}}
-files['**/core/lualib/production-score.lua'] = {globals = {'production_score', 'get_price_recursive'}, ignore = {'4../player'}}
-files['**/core/lualib/story*'] = {std = '+factorio_base_story', ignore = {'42./k', '42./filter'}}
-files['**/core/lualib/mod-gui.lua'] = {globals = {'mod_gui'}}
-files['**/core/lualib/camera.lua'] = {globals = {'camera'}}
-files['**/core/lualib/builder.lua'] = {globals = {'Builder', 'builder', 'action', 'down', 'right'}}
+files['**/core/lualib/'] = { std = STD_BASE_CONTROL }
+files['**/core/lualib/util.lua'] = { globals = { 'util', 'table' }, ignore = { '432/object' } }
+files['**/core/lualib/silo-script.lua'] = { globals = { 'silo_script' }, ignore = { '4../player' } }
+files['**/core/lualib/production-score.lua'] = { globals = { 'production_score', 'get_price_recursive' }, ignore = { '4../player' } }
+files['**/core/lualib/story*'] = { std = '+factorio_base_story', ignore = { '42./k', '42./filter' } }
+files['**/core/lualib/mod-gui.lua'] = { globals = { 'mod_gui' } }
+files['**/core/lualib/camera.lua'] = { globals = { 'camera' } }
+files['**/core/lualib/builder.lua'] = { globals = { 'Builder', 'builder', 'action', 'down', 'right' } }
 
-files['**/core/lualib/bonus-gui-ordering/'] = {std = STD_BASE_DATA}
-files['**/core/lualib/dataloader.lua'] = {globals = {'data'}}
-files['**/core/lualib/circuit-connector-*'] = {std = STD_BASE_DATA..'+factorio_circuit_connector_generated'}
-files['**/core/lualib/bonus-gui-ordering.lua'] = {globals = {'bonus_gui_ordering'}}
+files['**/core/lualib/bonus-gui-ordering/'] = { std = STD_BASE_DATA }
+files['**/core/lualib/dataloader.lua'] = { globals = { 'data' } }
+files['**/core/lualib/circuit-connector-*'] = { std = STD_BASE_DATA .. '+factorio_circuit_connector_generated' }
+files['**/core/lualib/bonus-gui-ordering.lua'] = { globals = { 'bonus_gui_ordering' } }
 
-files['**/base/prototypes/'] = {std = STD_BASE_DATA}
-files['**/core/prototypes/'] = {std = STD_BASE_DATA}
-files['**/core/prototypes/noise-programs.lua'] = {ignore = {'212/x', '212/y', '212/tile', '212/map'}}
+files['**/base/prototypes/'] = { std = STD_BASE_DATA }
+files['**/core/prototypes/'] = { std = STD_BASE_DATA }
+files['**/core/prototypes/noise-programs.lua'] = { ignore = { '212/x', '212/y', '212/tile', '212/map' } }
 
 --(( stdlib ))--
 local stdlib_control = {
@@ -144,7 +144,7 @@ files['**/stdlib/data/'] = stdlib_data
 
 -- STDLIB Busted Spec
 files['**/spec/**'] = {
-    globals = {'serpent', 'log', 'SLOG', 'RESET'},
+    globals = { 'serpent', 'log', 'SLOG', 'RESET' },
     std = 'lua52c+busted+factorio_defines+factorio_control+stdlib'
 } --))
 
@@ -160,9 +160,25 @@ stds.factorio = {
         "table_size",
         util = {
             fields = {
-                "by_pixel", "distance", "findfirstentity", "positiontostr", "formattime", "moveposition", "oppositedirection",
-                "ismoduleavailable", "multiplystripes", "format_number", "increment", "color", "conditional_return",
-                "add_shift", "merge", "premul_color", "encode", "decode", "insert_safe",
+                "by_pixel",
+                "distance",
+                "findfirstentity",
+                "positiontostr",
+                "formattime",
+                "moveposition",
+                "oppositedirection",
+                "ismoduleavailable",
+                "multiplystripes",
+                "format_number",
+                "increment",
+                "color",
+                "conditional_return",
+                "add_shift",
+                "merge",
+                "premul_color",
+                "encode",
+                "decode",
+                "insert_safe",
                 table = {
                     fields = {
                         "compare", "deepcopy"
@@ -192,9 +208,9 @@ stds.factorio_control = {
         settings = {
             fields = {
                 "get_player_settings",
-                startup = {read_only = false, other_fields = true},
-                global = {read_only = false, other_fields = true},
-                player = {read_only = false, other_fields = true},
+                startup = { read_only = false, other_fields = true },
+                global = { read_only = false, other_fields = true },
+                player = { read_only = false, other_fields = true },
             },
         },
 
@@ -212,15 +228,17 @@ stds.factorio_control = {
         -- (http://lua-api.factorio.com/latest/LuaRemote.html)
         remote = {
             fields = {
-                interfaces = {read_only = false, other_fields = true},
-                "add_interface", "remove_interface", "call"
+                interfaces = { read_only = false, other_fields = true },
+                "add_interface",
+                "remove_interface",
+                "call"
             },
             read_only = true,
             other_fields = false,
         },
 
         rcon = {
-            fields = {'print'}
+            fields = { 'print' }
         },
 
         rendering = {
@@ -315,7 +333,7 @@ stds.factorio_control = {
         -- @game@: Main object through which most of the API is accessed.
         -- It is, however, not available inside handlers registered with @script.on_load@.
         -- (http://lua-api.factorio.com/latest/LuaGameScript.html)
-        game ={
+        game = {
             other_fields = false,
             read_only = false,
             fields = {
@@ -373,43 +391,43 @@ stds.factorio_control = {
                 "get_filtered_mod_setting_prototypes",
                 "get_filtered_achievement_prototypes",
 
-                active_mods = {read_only = true, other_fields = true},
-                ammo_category_prototypes = {read_only = true, other_fields = true},
-                autoplace_control_prototypes = {read_only = true, other_fields = true},
-                backer_names = {read_only = true, other_fields = true},
-                connected_players = {read_only = true, other_fields = true},
-                custom_input_prototypes = {read_only = true, other_fields = true},
-                damage_prototypes = {read_only = true, other_fields = true},
-                decorative_prototypes = {read_only = true, other_fields = true},
-                default_map_gen_settings = {read_only = true, other_fields = true},
-                difficulty = {read_only = true, other_fields = true},
-                difficulty_settings = {read_only = true, other_fields = true},
-                enemy_has_vision_on_land_mines = {read_only = false, other_fields = false},
-                entity_prototypes = {read_only = true, other_fields = true},
-                equipment_grid_prototypes = {read_only = true, other_fields = true},
-                equipment_prototypes = {read_only = true, other_fields = true},
-                finished = {read_only = true, other_fields = true},
-                fluid_prototypes = {read_only = true, other_fields = true},
-                forces = {read_only = true, other_fields = true},
-                item_prototypes = {read_only = true, other_fields = true},
-                map_settings = {read_only = true, other_fields = true},
-                mod_setting_prototypes = {read_only = true, other_fields = true},
-                noise_layer_prototypes = {read_only = true, other_fields = true},
-                permissions = {read_only = true, other_fields = true},
-                player = {read_only = true, other_fields = true},
-                players = {read_only = true, other_fields = true},
-                recipe_prototypes = {read_only = true, other_fields = true},
-                speed = {read_only = false, other_fields = false},
-                styles = {read_only = true, other_fields = true},
-                surfaces = {read_only = true, other_fields = true},
-                technology_prototypes = {read_only = true, other_fields = true},
-                tick = {read_only = true, other_fields = true},
-                tick_paused = {read_only = false, other_fields = false},
-                ticks_played = {read_only = true, other_fields = true},
-                ticks_to_run = {read_only = false, other_fields = false},
-                tile_prototypes = {read_only = true, other_fields = true},
-                virtual_signal_prototypes = {read_only = true, other_fields = true},
-                pollution_statistics = {read_only = true, other_fields = true}
+                active_mods = { read_only = true, other_fields = true },
+                ammo_category_prototypes = { read_only = true, other_fields = true },
+                autoplace_control_prototypes = { read_only = true, other_fields = true },
+                backer_names = { read_only = true, other_fields = true },
+                connected_players = { read_only = true, other_fields = true },
+                custom_input_prototypes = { read_only = true, other_fields = true },
+                damage_prototypes = { read_only = true, other_fields = true },
+                decorative_prototypes = { read_only = true, other_fields = true },
+                default_map_gen_settings = { read_only = true, other_fields = true },
+                difficulty = { read_only = true, other_fields = true },
+                difficulty_settings = { read_only = true, other_fields = true },
+                enemy_has_vision_on_land_mines = { read_only = false, other_fields = false },
+                entity_prototypes = { read_only = true, other_fields = true },
+                equipment_grid_prototypes = { read_only = true, other_fields = true },
+                equipment_prototypes = { read_only = true, other_fields = true },
+                finished = { read_only = true, other_fields = true },
+                fluid_prototypes = { read_only = true, other_fields = true },
+                forces = { read_only = true, other_fields = true },
+                item_prototypes = { read_only = true, other_fields = true },
+                map_settings = { read_only = true, other_fields = true },
+                mod_setting_prototypes = { read_only = true, other_fields = true },
+                noise_layer_prototypes = { read_only = true, other_fields = true },
+                permissions = { read_only = true, other_fields = true },
+                player = { read_only = true, other_fields = true },
+                players = { read_only = true, other_fields = true },
+                recipe_prototypes = { read_only = true, other_fields = true },
+                speed = { read_only = false, other_fields = false },
+                styles = { read_only = true, other_fields = true },
+                surfaces = { read_only = true, other_fields = true },
+                technology_prototypes = { read_only = true, other_fields = true },
+                tick = { read_only = true, other_fields = true },
+                tick_paused = { read_only = false, other_fields = false },
+                ticks_played = { read_only = true, other_fields = true },
+                ticks_to_run = { read_only = false, other_fields = false },
+                tile_prototypes = { read_only = true, other_fields = true },
+                virtual_signal_prototypes = { read_only = true, other_fields = true },
+                pollution_statistics = { read_only = true, other_fields = true }
             },
         },
     },
@@ -417,7 +435,7 @@ stds.factorio_control = {
     globals = {
         -- @global@: The global dictionary, useful for storing data persistent across a save-load cycle.
         -- Writing access is given to the mod-id field (for mod-wise saved data).
-        -- (http://lua-api.factorio.com/latest/Global.html)
+        -- (http://lua-api.factorio.com/latest/storage.html)
         "global",
 
         -- @MOD@: Keep it organized, use this variable for anything that "NEEDS" to be global for some reason.
@@ -434,7 +452,8 @@ stds.factorio_data = {
                     other_fields = true,
                     read_only = false
                 },
-                "extend", "is_demo"
+                "extend",
+                "is_demo"
             },
         },
 
@@ -461,64 +480,105 @@ stds.factorio_data = {
 
 --(( Factorio Globals are bad mkay ))--
 stds.factorio_base_control = {
-    read_globals = {"silo_script", "mod_gui", "camera"}
+    read_globals = { "silo_script", "mod_gui", "camera" }
 }
 
 stds.factorio_base_scenarios = {
     globals = {
         "check_automate_science_packs_advice", "check_research_hints", "check_supplies", "manage_attacks", "all_dead",
-        "on_win", "difficulty_number", "init_attack_data", "handle_attacks", "count_items_in_container", "progress", "scanned",
+        "on_win", "difficulty_number", "init_attack_data", "handle_attacks", "count_items_in_container", "progress",
+        "scanned",
         "check_light", "check_machine_gun", "level", "story_table",
 
         "tightspot_prices", "tightspot_make_offer", "tightspot_init", "tightspot_get_required_balance",
-        "tightspot_init_level", "tightspot_init_spending_frame", "tightspot_init_progress_frame", "tightspot_update_progress", "tightspot_update_spending",
-        "tightspot_get_missing_to_win", "tightspot_sell_back", "tightspot_start_level", "tightspot_show_level_description", "tightspot_update_speed_label",
+        "tightspot_init_level", "tightspot_init_spending_frame", "tightspot_init_progress_frame",
+        "tightspot_update_progress", "tightspot_update_spending",
+        "tightspot_get_missing_to_win", "tightspot_sell_back", "tightspot_start_level",
+        "tightspot_show_level_description", "tightspot_update_speed_label",
         "map_ignore", "tightspot_check_level", "land_price",
 
-        "transport_belt_madness_init", "transport_belt_madness_init_level", "transport_belt_madness_create_chests", "transport_belt_madness_fill_chests",
-        "transport_belt_madness_start_level", "map_ignore", "map_clear", "map_load", "map_save", "transport_belt_madness_show_level_description",
-        "transport_belt_madness_check_level", "transport_belt_madness_next_level", "transport_belt_madness_clear_level", "transport_belt_madness_contains_next_level",
+        "transport_belt_madness_init", "transport_belt_madness_init_level", "transport_belt_madness_create_chests",
+        "transport_belt_madness_fill_chests",
+        "transport_belt_madness_start_level", "map_ignore", "map_clear", "map_load", "map_save",
+        "transport_belt_madness_show_level_description",
+        "transport_belt_madness_check_level", "transport_belt_madness_next_level", "transport_belt_madness_clear_level",
+        "transport_belt_madness_contains_next_level",
 
-        "restricted", "check_built_items", "result", "disable_combat_technologies", "apply_character_modifiers", "apply_combat_modifiers", "apply_balance",
-        "load_config", "starting_area_constant", "create_next_surface", "end_round", "prepare_next_round", "silo_died","choose_joining_gui",
-        "destroy_joining_guis", "create_random_join_gui", "create_auto_assign_gui", "create_pick_join_gui", "create_config_gui", "make_config_table", "default",
-        "make_team_gui", "make_team_gui_config", "add_team_button_press", "trash_team_button_press", "remove_team_from_team_table", "add_team_to_team_table",
-        "set_teams_from_gui", "on_team_button_press", "make_color_dropdown", "create_balance_option", "create_disable_frame", "disable_frame", "parse_disabled_items",
-        "set_balance_settings", "config_confirm", "parse_config_from_gui", "get_color", "roll_starting_area", "delete_roll_surfaces", "auto_assign",
-        "destroy_config_for_all", "prepare_map", "set_evolution_factor", "update_players_on_team_count", "random_join", "init_player_gui",
-        "destroy_player_gui", "objective_button_press", "admin_button_press", "admin_frame_button_press", "diplomacy_button_press", "update_diplomacy_frame",
-        "diplomacy_frame_button_press", "team_changed_diplomacy", "diplomacy_check_press", "get_stance", "give_inventory", "setup_teams", "disable_items_for_all",
-        "set_random_team", "set_diplomacy", "create_spawn_positions", "set_spawn_position", "set_team_together_spawns", "chart_starting_area_for_force_spawns",
-        "check_starting_area_chunks_are_generated", "check_player_color", "check_round_start", "clear_starting_area_enemies", "check_no_rush_end", "check_no_rush_players",
-        "finish_setup", "chart_area_for_force", "setup_start_area_copy", "update_copy_progress", "update_progress_bar", "copy_paste_starting_area_tiles",
-        "copy_paste_starting_area_entities", "create_silo_for_force", "setup_research", "on_chunk_generated", "get_distance_to_nearest_spawn",
-        "create_wall_for_force", "fpn", "give_items", "create_item_frame", "create_technologies_frame", "create_cheat_frame", "create_day_frame",
-        "time_modifier", "points_per_second_start", "points_per_second_level_subtract", "levels", "update_info", "get_time_left", "update_time_left",
-        "on_joined", "make_frame", "update_frame", "update_table", "calculate_task_item_multiplayer", "setup_config", "select_from_probability_table",
-        "select_inventory", "select_equipment", "select_challange_type", "save_round_statistics", "start_challenge", "create_teams", "set_areas",
-        "decide_player_team", "set_teams", "refresh_leaderboard", "set_player", "generate_technology_list", "generate_research_task","setup_unlocks",
-        "check_technology_progress", "generate_production_task", "generate_shopping_list_task", "set_gui_flow_table", "create_visibility_button",
-        "check_item_lists", "update_task_gui", "check_end_of_round", "end_round_gui_update", "try_to_check_victory", "update_gui", "check_start_round",
-        "check_start_set_areas", "check_start_setting_entities", "check_set_areas", "check_clear_areas", "check_chests", "check_chests_shopping_list",
-        "check_chests_production", "check_input_chests", "fill_input_chests", "check_victory", "shopping_task_finished", "calculate_force_points",
-        "update_research_task_table", "update_production_task_table", "update_shopping_list_task_table", "create_joined_game_gui", "pre_ending_round",
-        "player_ending_prompt", "update_end_timer", "update_begin_timer", "team_finished", "save_points_list", "give_force_players_points",
-        "update_winners_list", "set_spectator", "set_character", "give_starting_inventory", "give_equipment", "shuffle_table", "format_time",
-        "spairs", "fill_leaderboard", "create_grid", "simple_entities", "save_map_data", "clear_map", "create_tiles", "recreate_entities",
-        "map_sets", "give_points", "init_forces", "init_globals", "init_unit_settings", "check_next_wave", "next_wave", "calculate_wave_power",
-        "wave_end", "make_next_spawn_tick", "check_spawn_units", "get_wave_units", "spawn_units", "randomize_ore", "set_command", "command_straglers",
-        "unit_config", "make_next_wave_tick", "time_to_next_wave", "time_to_wave_end", "rocket_died", "unit_died", "get_bounty_price", "setup_waypoints",
-        "insert_items", "give_starting_equipment", "give_spawn_equipment", "next_round_button_visible", "gui_init", "create_wave_frame", "create_money_frame",
-        "create_upgrade_gui", "update_upgrade_listing", "upgrade_research", "get_upgrades", "get_money", "update_connected_players", "update_round_number",
-        "set_research", "set_recipes", "check_deconstruction", "check_blueprint_placement", "loop_entities", "experiment_items",
+        "restricted", "check_built_items", "result", "disable_combat_technologies", "apply_character_modifiers",
+        "apply_combat_modifiers", "apply_balance",
+        "load_config", "starting_area_constant", "create_next_surface", "end_round", "prepare_next_round", "silo_died",
+        "choose_joining_gui",
+        "destroy_joining_guis", "create_random_join_gui", "create_auto_assign_gui", "create_pick_join_gui",
+        "create_config_gui", "make_config_table", "default",
+        "make_team_gui", "make_team_gui_config", "add_team_button_press", "trash_team_button_press",
+        "remove_team_from_team_table", "add_team_to_team_table",
+        "set_teams_from_gui", "on_team_button_press", "make_color_dropdown", "create_balance_option",
+        "create_disable_frame", "disable_frame", "parse_disabled_items",
+        "set_balance_settings", "config_confirm", "parse_config_from_gui", "get_color", "roll_starting_area",
+        "delete_roll_surfaces", "auto_assign",
+        "destroy_config_for_all", "prepare_map", "set_evolution_factor", "update_players_on_team_count", "random_join",
+        "init_player_gui",
+        "destroy_player_gui", "objective_button_press", "admin_button_press", "admin_frame_button_press",
+        "diplomacy_button_press", "update_diplomacy_frame",
+        "diplomacy_frame_button_press", "team_changed_diplomacy", "diplomacy_check_press", "get_stance", "give_inventory",
+        "setup_teams", "disable_items_for_all",
+        "set_random_team", "set_diplomacy", "create_spawn_positions", "set_spawn_position", "set_team_together_spawns",
+        "chart_starting_area_for_force_spawns",
+        "check_starting_area_chunks_are_generated", "check_player_color", "check_round_start",
+        "clear_starting_area_enemies", "check_no_rush_end", "check_no_rush_players",
+        "finish_setup", "chart_area_for_force", "setup_start_area_copy", "update_copy_progress", "update_progress_bar",
+        "copy_paste_starting_area_tiles",
+        "copy_paste_starting_area_entities", "create_silo_for_force", "setup_research", "on_chunk_generated",
+        "get_distance_to_nearest_spawn",
+        "create_wall_for_force", "fpn", "give_items", "create_item_frame", "create_technologies_frame",
+        "create_cheat_frame", "create_day_frame",
+        "time_modifier", "points_per_second_start", "points_per_second_level_subtract", "levels", "update_info",
+        "get_time_left", "update_time_left",
+        "on_joined", "make_frame", "update_frame", "update_table", "calculate_task_item_multiplayer", "setup_config",
+        "select_from_probability_table",
+        "select_inventory", "select_equipment", "select_challange_type", "save_round_statistics", "start_challenge",
+        "create_teams", "set_areas",
+        "decide_player_team", "set_teams", "refresh_leaderboard", "set_player", "generate_technology_list",
+        "generate_research_task", "setup_unlocks",
+        "check_technology_progress", "generate_production_task", "generate_shopping_list_task", "set_gui_flow_table",
+        "create_visibility_button",
+        "check_item_lists", "update_task_gui", "check_end_of_round", "end_round_gui_update", "try_to_check_victory",
+        "update_gui", "check_start_round",
+        "check_start_set_areas", "check_start_setting_entities", "check_set_areas", "check_clear_areas", "check_chests",
+        "check_chests_shopping_list",
+        "check_chests_production", "check_input_chests", "fill_input_chests", "check_victory", "shopping_task_finished",
+        "calculate_force_points",
+        "update_research_task_table", "update_production_task_table", "update_shopping_list_task_table",
+        "create_joined_game_gui", "pre_ending_round",
+        "player_ending_prompt", "update_end_timer", "update_begin_timer", "team_finished", "save_points_list",
+        "give_force_players_points",
+        "update_winners_list", "set_spectator", "set_character", "give_starting_inventory", "give_equipment",
+        "shuffle_table", "format_time",
+        "spairs", "fill_leaderboard", "create_grid", "simple_entities", "save_map_data", "clear_map", "create_tiles",
+        "recreate_entities",
+        "map_sets", "give_points", "init_forces", "init_globals", "init_unit_settings", "check_next_wave", "next_wave",
+        "calculate_wave_power",
+        "wave_end", "make_next_spawn_tick", "check_spawn_units", "get_wave_units", "spawn_units", "randomize_ore",
+        "set_command", "command_straglers",
+        "unit_config", "make_next_wave_tick", "time_to_next_wave", "time_to_wave_end", "rocket_died", "unit_died",
+        "get_bounty_price", "setup_waypoints",
+        "insert_items", "give_starting_equipment", "give_spawn_equipment", "next_round_button_visible", "gui_init",
+        "create_wave_frame", "create_money_frame",
+        "create_upgrade_gui", "update_upgrade_listing", "upgrade_research", "get_upgrades", "get_money",
+        "update_connected_players", "update_round_number",
+        "set_research", "set_recipes", "check_deconstruction", "check_blueprint_placement", "loop_entities",
+        "experiment_items",
         "setup", "story_gui_click", "clear_surface", "add_run_trains_button", "puzzle_condition", "basic_signals",
-        "loop_trains", "Y_offset", "ghosts_1", "ghosts_2", "required_path", "through_wall_path", "count", "check_built_real_rail",
+        "loop_trains", "Y_offset", "ghosts_1", "ghosts_2", "required_path", "through_wall_path", "count",
+        "check_built_real_rail",
         "current_ghosts_count", "other", "rails", "set_rails", "straight_section", "late_entities", "entities", "stop",
         "get_spawn_coordinate",
 
         --tutorials
-        "intermission", "create_entities_on_tick", "on_player_created", "required_count", "non_player_entities", "clear_rails",
-        "chest", "damage", "furnace", "init_prototypes", "build_infi_table", "junk", "update_player_tags", "time_left", "team_production",
+        "intermission", "create_entities_on_tick", "on_player_created", "required_count", "non_player_entities",
+        "clear_rails",
+        "chest", "damage", "furnace", "init_prototypes", "build_infi_table", "junk", "update_player_tags", "time_left",
+        "team_production",
         "create_task_frame", "create_visibilty_buttons", "update_leaderboard", "in_in_area"
     }
 }
@@ -529,20 +589,28 @@ stds.factorio_base_data = {
         "make_cursor_box", "make_full_cursor_box",
         "default_container_padding", "default_orange_color", "default_light_orange_color", "warning_red_color",
         "achievement_green_color", "achievement_tan_color", "orangebuttongraphcialset", "bluebuttongraphcialset",
-        "bonus_gui_ordering", "trivial_smoke", "technology_slot_base_width", "technology_slot_base_height", "default_frame_font_vertical_compensation",
+        "bonus_gui_ordering", "trivial_smoke", "technology_slot_base_width", "technology_slot_base_height",
+        "default_frame_font_vertical_compensation",
 
         --Belts
-        "transport_belt_connector_frame_sprites", "transport_belt_circuit_wire_connection_point", "transport_belt_circuit_wire_max_distance",
-        "transport_belt_circuit_connector_sprites", "ending_patch_prototype", "basic_belt_horizontal", "basic_belt_vertical",
-        "basic_belt_ending_top", "basic_belt_ending_bottom", "basic_belt_ending_side", "basic_belt_starting_top", "basic_belt_starting_bottom",
-        "basic_belt_starting_side", "fast_belt_horizontal", "fast_belt_vertical", "fast_belt_ending_top", "fast_belt_ending_bottom",
-        "fast_belt_ending_side", "fast_belt_starting_top", "fast_belt_starting_bottom", "fast_belt_starting_side", "express_belt_horizontal",
-        "express_belt_vertical", "express_belt_ending_top", "express_belt_ending_bottom", "express_belt_ending_side", "express_belt_starting_top",
+        "transport_belt_connector_frame_sprites", "transport_belt_circuit_wire_connection_point",
+        "transport_belt_circuit_wire_max_distance",
+        "transport_belt_circuit_connector_sprites", "ending_patch_prototype", "basic_belt_horizontal",
+        "basic_belt_vertical",
+        "basic_belt_ending_top", "basic_belt_ending_bottom", "basic_belt_ending_side", "basic_belt_starting_top",
+        "basic_belt_starting_bottom",
+        "basic_belt_starting_side", "fast_belt_horizontal", "fast_belt_vertical", "fast_belt_ending_top",
+        "fast_belt_ending_bottom",
+        "fast_belt_ending_side", "fast_belt_starting_top", "fast_belt_starting_bottom", "fast_belt_starting_side",
+        "express_belt_horizontal",
+        "express_belt_vertical", "express_belt_ending_top", "express_belt_ending_bottom", "express_belt_ending_side",
+        "express_belt_starting_top",
         "express_belt_starting_bottom", "express_belt_starting_side",
 
         --Circuit Connectors
         "circuit_connector_definitions", "default_circuit_wire_max_distance", "inserter_circuit_wire_max_distance",
-        "universal_connector_template", "belt_connector_template", "belt_frame_connector_template", "inserter_connector_template",
+        "universal_connector_template", "belt_connector_template", "belt_frame_connector_template",
+        "inserter_connector_template",
 
         --Inserter Circuit Connectors
         "inserter_circuit_wire_max_distance", "inserter_default_stack_control_input_signal",
@@ -555,7 +623,8 @@ stds.factorio_base_data = {
         "laser_turret_extension", "laser_turret_extension_shadow", "laser_turret_extension_mask",
 
         --Pipes
-        "pipecoverspictures", "pipepictures", "assembler2pipepictures", "assembler3pipepictures", "make_heat_pipe_pictures",
+        "pipecoverspictures", "pipepictures", "assembler2pipepictures", "assembler3pipepictures",
+        "make_heat_pipe_pictures",
 
         --Combinators
         "generate_arithmetic_combinator", "generate_decider_combinator", "generate_constant_combinator",
@@ -576,12 +645,13 @@ stds.factorio_base_data = {
 
         --Other
         "tile_variations_template", "make_water_autoplace_settings",
-        "make_unit_melee_ammo_type",  "make_trivial_smoke", "make_4way_animation_from_spritesheet", "flying_robot_sounds",
+        "make_unit_melee_ammo_type", "make_trivial_smoke", "make_4way_animation_from_spritesheet", "flying_robot_sounds",
         "productivitymodulelimitation", "crash_trigger", "capsule_smoke", "make_beam", "playeranimations",
         "make_blood_tint", "make_shadow_tint",
 
         --tiles
-        "water_transition_template", "make_water_transition_template", "water_autoplace_settings", "water_tile_type_names",
+        "water_transition_template", "make_water_transition_template", "water_autoplace_settings",
+        "water_tile_type_names",
         "patch_for_inner_corner_of_transition_between_transition",
     }
 }
@@ -596,7 +666,8 @@ stds.factorio_base_story = {
         "player_add_message_log", "message_log_frame", "message_log_scrollpane", "message_log_close_button",
         "message_log_table", "toggle_message_log_button", "toggle_objective_button", "message_log_init",
         "add_gui_recursive", "add_toggle_message_log_button", "add_toggle_objective_button", "mod_gui",
-        "flash_message_log_button", "flash_message_log_on_tick", "story_gui_click", "story_points_by_name", "story_branches",
+        "flash_message_log_button", "flash_message_log_on_tick", "story_gui_click", "story_points_by_name",
+        "story_branches",
         "player", "surface", "deconstruct_on_tick", "recreate_entities_on_tick", "flying_congrats", "story_table"
     }
 }
@@ -604,8 +675,10 @@ stds.factorio_base_story = {
 stds.factorio_circuit_connector_generated = {
     globals = {
         'default_circuit_wire_max_distance', 'circuit_connector_definitions', 'universal_connector_template',
-        'belt_connector_template', 'belt_frame_connector_template', 'inserter_connector_template', 'inserter_connector_template',
-        'inserter_circuit_wire_max_distance', 'inserter_default_stack_control_input_signal', 'transport_belt_connector_frame_sprites',
+        'belt_connector_template', 'belt_frame_connector_template', 'inserter_connector_template',
+        'inserter_connector_template',
+        'inserter_circuit_wire_max_distance', 'inserter_default_stack_control_input_signal',
+        'transport_belt_connector_frame_sprites',
         'transport_belt_circuit_wire_max_distance',
     }
 } --))
@@ -1511,7 +1584,7 @@ stds.factorio_defines = {
             }
         }
     }
-}--))
+} --))
 
 stds.love_extra = {
     read_globals = {

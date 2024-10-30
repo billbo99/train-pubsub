@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.0
+Date: 2024/10/30
+  Uploaded By:
+    - billbo99
+  Changes:
+    - Beta release of TSM for Factorio 2.0
+---------------------------------------------------------------------------------------------------
 Version: 1.1.19
 Date: 2023/09/03
   Uploaded By:
@@ -185,7 +192,7 @@ Date: 2020/09/28
       indicated time is excluded.
     - Minor perforamce improvement mainly through implementing event filters
   Bugfixes:
-    - Fixes rare crash caused by legacy table global.priorities
+    - Fixes rare crash caused by legacy table storage.priorities
     - Autocorrects data where the train counter link to the requester station is broken
       due to entity unit_number changing for any reason
 
