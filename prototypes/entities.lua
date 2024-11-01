@@ -6,12 +6,6 @@ train_counter.minable = { mining_time = 0.1, result = "constant-combinator" }
 
 data:extend({ train_counter })
 
--- local train_publisher = util.table.deepcopy(data.raw["lamp"]["lamp"])
--- train_publisher.name = "train-publisher"
--- train_publisher.minable = { mining_time = 0.1, result = train_publisher.name }
-
-
-
 data:extend(
     {
         {
@@ -293,6 +287,8 @@ data:extend(
 local supply = table.deepcopy(data.raw["train-stop"]["train-stop"])
 supply.name = "subscriber-train-stop"
 supply.fast_replaceable_group = "station"
+supply.icon = "__train-pubsub__/graphics/icons/train-stop-sub.png"
+supply.icon_size = 32
 supply.minable.result = "subscriber-train-stop"
 
 supply.animations = make_4way_animation_from_spritesheet({
@@ -344,6 +340,8 @@ supply.animations = make_4way_animation_from_spritesheet({
 local publish = table.deepcopy(data.raw["train-stop"]["train-stop"])
 publish.name = "publisher-train-stop"
 publish.minable.result = "publisher-train-stop"
+publish.icon = "__train-pubsub__/graphics/icons/train-stop-req.png"
+publish.icon_size = 32
 publish.fast_replaceable_group = "station"
 publish.animations = make_4way_animation_from_spritesheet({
     layers =

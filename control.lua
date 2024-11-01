@@ -1363,36 +1363,28 @@ local filters = {
 
 
 script.on_event(defines.events.on_built_entity, function(event)
-    --	if isPS(event.created_entity) then
-    --		game.print("PS entity")
     addPSToTable(event.entity, event.player_index, event)
-    --	end
 
     if event.entity.valid == true then
         if event.entity.name == "train-counter" then
             event.entity.operable = false
         end
     end
-    -- debugp(event.created_entity.name)
 end, filters)
 
 
 script.on_event(defines.events.on_robot_built_entity, function(event)
-    --	if isPS(event.created_entity) then
-    addPSToTable(event.created_entity, 0, event)
-    --	end
+    addPSToTable(event.entity, 0, event)
 
-    if event.created_entity.valid == true then
-        if event.created_entity.name == "train-counter" then
-            event.created_entity.operable = false
+    if event.entity.valid == true then
+        if event.entity.name == "train-counter" then
+            event.entity.operable = false
         end
     end
 end, filters)
 
 script.on_event(defines.events.script_raised_built, function(event)
-    --	if isPS(event.entity) then
     addPSToTable(event.entity, 0, event)
-    --	end
     if event.entity.valid == true then
         if event.entity.name == "train-counter" then
             event.entity.operable = false
@@ -1401,9 +1393,7 @@ script.on_event(defines.events.script_raised_built, function(event)
 end, filters)
 
 script.on_event(defines.events.script_raised_revive, function(event)
-    --	if isPS(event.entity) then
     addPSToTable(event.entity, 0, event)
-    --	end
     if event.entity.valid == true then
         if event.entity.name == "train-counter" then
             event.entity.operable = false
@@ -1412,10 +1402,7 @@ script.on_event(defines.events.script_raised_revive, function(event)
 end, filters)
 
 script.on_event(defines.events.on_entity_cloned, function(event)
-    --	game.print("cloned")
-    --	if isPS(event.destination) then
     addPSToTable(event.destination, 0, event)
-    --	end
     if event.destination.valid == true then
         if event.destination.name == "train-counter" then
             event.destination.operable = false
@@ -1424,27 +1411,19 @@ script.on_event(defines.events.on_entity_cloned, function(event)
 end, filters)
 
 local function on_preplayer_mined_item(event)
-    --	if isPS(event.entity) then
     removePSFromTable(event.entity)
-    --	end
 end
 
 script.on_event(defines.events.on_robot_pre_mined, function(event)
-    --	if isPS(event.entity) then
     removePSFromTable(event.entity)
-    --	end
 end, filters)
 
 script.on_event(defines.events.on_entity_died, function(event)
-    --	if isPS(event.entity) then
     removePSFromTable(event.entity)
-    --	end
 end, filters)
 
 script.on_event(defines.events.script_raised_destroy, function(event)
-    --	if isPS(event.entity) then
     removePSFromTable(event.entity)
-    --	end
 end, filters)
 
 local function getUniqueName(entity)
