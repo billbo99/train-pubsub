@@ -93,14 +93,19 @@ end
 
 local function convert_version_to_number(old, new)
     local old_value, new_value = 0, 0
-    local old_major, old_minor, old_patch = string.match(old, "(%d+)%.(%d+)%.(%d+)")
-    local new_major, new_minor, new_patch = string.match(new, "(%d+)%.(%d+)%.(%d+)")
-
-    if old_major and old_minor and old_patch then
-        old_value = (old_major * 1000 * 1000) + (old_minor * 1000) + old_patch
+    if old then
+        local old_major, old_minor, old_patch = string.match(old, "(%d+)%.(%d+)%.(%d+)")
+        if old_major and old_minor and old_patch then
+            old_value = (old_major * 1000 * 1000) + (old_minor * 1000) + old_patch
+        end
     end
-    if new_major and new_minor and new_patch then
-        new_value = (new_major * 1000 * 1000) + (new_minor * 1000) + new_patch
+
+    if new then
+        local new_major, new_minor, new_patch = string.match(new, "(%d+)%.(%d+)%.(%d+)")
+
+        if new_major and new_minor and new_patch then
+            new_value = (new_major * 1000 * 1000) + (new_minor * 1000) + new_patch
+        end
     end
 
     return old_value, new_value
@@ -1549,7 +1554,7 @@ script.on_event(defines.events.on_entity_renamed, function(event)
                             storage.newpublishers[entity.surface.name][backer_name][j] = storage.newpublishers[
                             entity.surface.name][backer_name][j] or {}
                             storage.newpublishers[entity.surface.name][backer_name][j] = table.deepcopy(storage
-                            .newpublishers[entity.surface.name][event.old_name][i])
+                                .newpublishers[entity.surface.name][event.old_name][i])
                             storage.newpublishers[entity.surface.name][backer_name][j].request = false
                             storage.newpublishers[entity.surface.name][backer_name][j].tick = game.tick + 10
                             storage.newpublishers[entity.surface.name][event.old_name][i] = nil

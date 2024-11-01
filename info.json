@@ -1,6 +1,6 @@
 {
     "name": "train-pubsub",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "title": "Train Supply Manager",
     "author": "LordKTor,  contributor billbo99",
     "description": "Control train scheduling via a publish/subscribe event based system. Easy to use, and stress tested to gigabase level.  Includes fully automated refuelling.",
