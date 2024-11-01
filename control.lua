@@ -1,11 +1,10 @@
 require "util"
 mod_gui = require("mod-gui")
---require("table")
 require("control-util")
 require("api")
 require("bp")
 require("priority-util")
---require "style"
+require("tsm_commands")
 
 MOD_NAME = "TrainManager"
 
@@ -38,14 +37,16 @@ end
 
 script.on_event(defines.events.on_surface_created, function(event)
     local surface = game.get_surface(event.surface_index)
-    storage.newcounters = storage.newcounters or {}
-    storage.newcounters[surface.name] = storage.newcounters[surface.name] or {}
+    if surface then
+        storage.newcounters = storage.newcounters or {}
+        storage.newcounters[surface.name] = storage.newcounters[surface.name] or {}
 
-    storage.newpriority = storage.newpriority or {}
-    storage.newpriority[surface.name] = storage.newpriority[surface.name] or {}
+        storage.newpriority = storage.newpriority or {}
+        storage.newpriority[surface.name] = storage.newpriority[surface.name] or {}
 
-    storage.newpublishers = storage.newpublishers or {}
-    storage.newpublishers[surface.name] = storage.newpublishers[surface.name] or {}
+        storage.newpublishers = storage.newpublishers or {}
+        storage.newpublishers[surface.name] = storage.newpublishers[surface.name] or {}
+    end
 end)
 
 script.on_event(defines.events.on_research_finished, function(event)
@@ -90,6 +91,21 @@ local function init_globals()
     end
 end
 
+local function convert_version_to_number(old, new)
+    local old_value, new_value = 0, 0
+    local old_major, old_minor, old_patch = string.match(old, "(%d+)%.(%d+)%.(%d+)")
+    local new_major, new_minor, new_patch = string.match(new, "(%d+)%.(%d+)%.(%d+)")
+
+    if old_major and old_minor and old_patch then
+        old_value = (old_major * 1000 * 1000) + (old_minor * 1000) + old_patch
+    end
+    if new_major and new_minor and new_patch then
+        new_value = (new_major * 1000 * 1000) + (new_minor * 1000) + new_patch
+    end
+
+    return old_value, new_value
+end
+
 -- Fuel handling
 local function on_configuration_changed(modlist)
     --storage.removeFuelStop = storage.removeFuelStop or {}
@@ -97,25 +113,26 @@ local function on_configuration_changed(modlist)
     init_globals()
 
     if modlist.mod_changes["train-pubsub"] then
-        if modlist.mod_changes["train-pubsub"].old_version == nil then
-            modlist.mod_changes["train-pubsub"].old_version = "0.0.0"
-        end
-        if modlist.mod_changes["train-pubsub"].old_version < "0.3.7" then
+        local old = modlist.mod_changes["train-pubsub"].old_version
+        local new = modlist.mod_changes["train-pubsub"].new_version
+
+        -- 2.31.1 becomes the number -- 2,031,001
+        old, new = convert_version_to_number(old, new)
+
+        if old < 3007 then
             storage.trains = storage.trains or {}
             for _, surface in pairs(game.surfaces) do
-                local trains = surface.get_trains()
+                local trains = game.train_manager.get_trains({ surface = surface.name })
                 for _, train in pairs(trains) do
                     storage.trains[train.id] = train
                 end
             end
         end
-        if modlist.mod_changes["train-pubsub"].old_version < "0.3.13" then
+        if old < 3013 then
             for _, force in pairs(game.forces) do
                 if (force.technologies["train-manager"].researched) then
-                    --	for _,player in pairs(game.players) do
                     force.recipes["train-config"].enabled = true
                 end
-                --	end
             end
         end
     end
@@ -196,52 +213,54 @@ end
 local function gui_open_frame(player)
     local gui = mod_gui.get_frame_flow(player)
     local frame = gui.tm_button_frame
-    frame.add {
-        type = "sprite-button",
-        name = "es_button",
-        sprite = "sub_train_stop",
-        style = mod_gui.button_style
-    }
-    frame.add {
-        type = "sprite-button",
-        name = "publish_button",
-        sprite = "publisher",
-        style = mod_gui.button_style
-    }
-    frame.add {
-        type = "sprite-button",
-        name = "priority_button",
-        sprite = "priority",
-        style = mod_gui.button_style
-    }
-    frame.add {
-        type = "sprite-button",
-        name = "subscribe_button",
-        sprite = "trains",
-        style = mod_gui.button_style
-    }
-    frame.add {
-        type = "sprite-button",
-        name = "match_button",
-        sprite = "key",
-        style = mod_gui.button_style
-    }
-    frame.add {
-        type = "sprite-button",
-        name = "rq_button",
-        sprite = "x",
-        style = mod_gui.button_style
-    }
-    -- helpers.write_file("ps_setting",serpent.block(player.mod_settings["ps-tooltip"]),{comment=false})
-    -- debugp(tostring(player.mod_settings["ps-tooltip"]))
-    if player.mod_settings["ps-tooltip"].value == true then
-        --debugp("mod setting true")
-        frame.subscribe_button.tooltip = { "gui-trainps.s-tooltip" }
-        frame.publish_button.tooltip = { "gui-trainps.r-tooltip" }
-        frame.priority_button.tooltip = { "gui-trainps.pri-tooltip" }
-        frame.match_button.tooltip = { "gui-trainps.k-tooltip" }
-        frame.es_button.tooltip = { "gui-trainps.es-tooltip" }
-        frame.rq_button.tooltip = { "gui-trainps.rq-tooltip" }
+    if frame then
+        frame.add {
+            type = "sprite-button",
+            name = "es_button",
+            sprite = "sub_train_stop",
+            style = mod_gui.button_style
+        }
+        frame.add {
+            type = "sprite-button",
+            name = "publish_button",
+            sprite = "publisher",
+            style = mod_gui.button_style
+        }
+        frame.add {
+            type = "sprite-button",
+            name = "priority_button",
+            sprite = "priority",
+            style = mod_gui.button_style
+        }
+        frame.add {
+            type = "sprite-button",
+            name = "subscribe_button",
+            sprite = "trains",
+            style = mod_gui.button_style
+        }
+        frame.add {
+            type = "sprite-button",
+            name = "match_button",
+            sprite = "key",
+            style = mod_gui.button_style
+        }
+        frame.add {
+            type = "sprite-button",
+            name = "rq_button",
+            sprite = "x",
+            style = mod_gui.button_style
+        }
+        -- helpers.write_file("ps_setting",serpent.block(player.mod_settings["ps-tooltip"]),{comment=false})
+        -- debugp(tostring(player.mod_settings["ps-tooltip"]))
+        if player.mod_settings["ps-tooltip"].value == true then
+            --debugp("mod setting true")
+            frame.subscribe_button.tooltip = { "gui-trainps.s-tooltip" }
+            frame.publish_button.tooltip = { "gui-trainps.r-tooltip" }
+            frame.priority_button.tooltip = { "gui-trainps.pri-tooltip" }
+            frame.match_button.tooltip = { "gui-trainps.k-tooltip" }
+            frame.es_button.tooltip = { "gui-trainps.es-tooltip" }
+            frame.rq_button.tooltip = { "gui-trainps.rq-tooltip" }
+        end
     end
 end
 
@@ -483,18 +502,17 @@ end
 local function gui_open_key_frame(player)
     local gui = mod_gui.get_frame_flow(player)
     local frame = gui.key_frame
-    --debugp("In key frame")
-    --	if not frame then return end
-    --	frame.clear()
-    frame.add { type = "label", caption = { "key-title" }, style = "caption_label" }
-    local scroll = frame.add { type = "scroll-pane", name = "scroll" }
-    scroll.style.maximal_height = player.mod_settings["max-keytrain-height"].value
-    local key_s = scroll.add { type = "table", name = "key_s", column_count = 2, style = "PubSub_table_style" }
-    storage.sub_index = storage.sub_index or {}
-    storage.subscriptions = storage.subscriptions or {}
-    for k, subs in pairs(storage.sub_index) do
-        key_s.add { type = "label", caption = k }
-        key_s.add { type = "label", caption = subs }
+    if frame then
+        frame.add { type = "label", caption = { "key-title" }, style = "caption_label" }
+        local scroll = frame.add { type = "scroll-pane", name = "scroll" }
+        scroll.style.maximal_height = player.mod_settings["max-keytrain-height"].value
+        local key_s = scroll.add { type = "table", name = "key_s", column_count = 2, style = "PubSub_table_style" }
+        storage.sub_index = storage.sub_index or {}
+        storage.subscriptions = storage.subscriptions or {}
+        for k, subs in pairs(storage.sub_index) do
+            key_s.add { type = "label", caption = k }
+            key_s.add { type = "label", caption = subs }
+        end
     end
 end
 
@@ -851,7 +869,7 @@ end
 
 local function copy_icon(event)
     local player = game.players[event.player_index]
-    helpers.write_file("cur_publisher", serpent.block(storage.cur_publisher), { comment = false })
+    helpers.write_file("cur_publisher", serpent.block(storage.cur_publisher))
     storage.player[event.player_index].id = {}
     storage.player[event.player_index].id.elem_type = storage.player[event.player_index].resource.elem_type
     storage.player[event.player_index].id.name = storage.player[event.player_index].resource.name
@@ -1530,8 +1548,8 @@ script.on_event(defines.events.on_entity_renamed, function(event)
                             local j = #storage.newpublishers[entity.surface.name][backer_name] + 1
                             storage.newpublishers[entity.surface.name][backer_name][j] = storage.newpublishers[
                             entity.surface.name][backer_name][j] or {}
-                            storage.newpublishers[entity.surface.name][backer_name][j] = table.deepcopy(global
-                                .newpublishers[entity.surface.name][event.old_name][i])
+                            storage.newpublishers[entity.surface.name][backer_name][j] = table.deepcopy(storage
+                            .newpublishers[entity.surface.name][event.old_name][i])
                             storage.newpublishers[entity.surface.name][backer_name][j].request = false
                             storage.newpublishers[entity.surface.name][backer_name][j].tick = game.tick + 10
                             storage.newpublishers[entity.surface.name][event.old_name][i] = nil
@@ -2685,7 +2703,7 @@ local function match_req(publisher, backer_name, x)
         if storage.newrequests[surface][backer_name] ~= nil then
             for i, req in pairs(storage.newrequests[surface][backer_name]) do
                 if publisher.entity == req.entity then
-                    table.remove(storage.newrequests[surface][backer_name], reqpri.i)
+                    table.remove(storage.newrequests[surface], reqpri.i)
                     break
                 end
             end
@@ -3138,81 +3156,81 @@ script.on_event(defines.events.on_train_created, function(event)
 end)
 
 
-local function fix_requests()
-    for i, surface in pairs(game.surfaces) do
-        if storage.newpublishers[surface.name] ~= nil then
-            if storage.newpublishers[surface.name] ~= {} then
-                for j, backers in pairs(storage.newpublishers[surface.name]) do
-                    if backers ~= nil then
-                        if backers ~= {} then
-                            for k, pub in pairs(backers) do
-                                game.print(j .. k)
-                                if pub == nil then
-                                    game.print("nil")
-                                    table.remove(storage.newpublishers[surface.name][j], k)
-                                elseif pub == {} then
-                                    game.print("Remove " .. k)
-                                    table.remove(storage.newpublishers[surface.name][j], k)
-                                else
-                                    game.print("write to file")
-                                    helpers.write_file(k, serpent.block(pub), { comment = false })
-                                end
-                            end
-                        else
-                            game.print("removing " .. j)
-                            table.remove(storage.newpublishers[surface.name], j)
-                        end
-                    else
-                        game.print("removing " .. j)
-                        table.remove(storage.newpublishers[surface.name], j)
-                    end
-                    game.print(j)
-                    if storage.newpublishers[surface.name][j] == nil then
-                        table.remove(storage.newpublishers[surface.name], j)
-                    elseif storage.newpublishers[surface.name][j] == {} then
-                        game.print("removing " .. j)
-                        table.remove(storage.newpublishers[surface.name], j)
-                    end
-                end
-            end
-        end
-        --[[ 		if storage.newpublishers[surface.name] == nil then
-			table.remove(storage.newpublishers,i)
-		elseif storage.newpublishers[surface.name] == {} then
-			table.remove(storage.newpublishers,i)
-		end ]]
-    end
+-- local function fix_requests()
+--     for i, surface in pairs(game.surfaces) do
+--         if storage.newpublishers[surface.name] ~= nil then
+--             if storage.newpublishers[surface.name] ~= {} then
+--                 for j, backers in pairs(storage.newpublishers[surface.name]) do
+--                     if backers ~= nil then
+--                         if backers ~= {} then
+--                             for k, pub in pairs(backers) do
+--                                 game.print(j .. k)
+--                                 if pub == nil then
+--                                     game.print("nil")
+--                                     table.remove(storage.newpublishers[surface.name][j], k)
+--                                 elseif pub == {} then
+--                                     game.print("Remove " .. k)
+--                                     table.remove(storage.newpublishers[surface.name][j], k)
+--                                 else
+--                                     game.print("write to file")
+--                                     helpers.write_file(k, serpent.block(pub))
+--                                 end
+--                             end
+--                         else
+--                             game.print("removing " .. j)
+--                             table.remove(storage.newpublishers[surface.name], j)
+--                         end
+--                     else
+--                         game.print("removing " .. j)
+--                         table.remove(storage.newpublishers[surface.name], j)
+--                     end
+--                     game.print(j)
+--                     if storage.newpublishers[surface.name][j] == nil then
+--                         table.remove(storage.newpublishers[surface.name], j)
+--                     elseif storage.newpublishers[surface.name][j] == {} then
+--                         game.print("removing " .. j)
+--                         table.remove(storage.newpublishers[surface.name], j)
+--                     end
+--                 end
+--             end
+--         end
+--         --[[ 		if storage.newpublishers[surface.name] == nil then
+-- 			table.remove(storage.newpublishers,i)
+-- 		elseif storage.newpublishers[surface.name] == {} then
+-- 			table.remove(storage.newpublishers,i)
+-- 		end ]]
+--     end
 
-    for i, surface in pairs(game.surfaces) do
-        if storage.newrequests[surface.name] ~= nil then
-            if storage.newrequests[surface.name] ~= {} then
-                for j, backers in pairs(storage.newrequests[surface.name]) do
-                    if backers ~= nil then
-                        if backers ~= {} then
-                            for k, pub in pairs(backers) do
-                                if backers[k] == nil then
-                                    table.remove(storage.newrequests[surface.name][j], k)
-                                elseif backers[k] == {} then
-                                    table.remove(storage.requests[surface.name][j], k)
-                                end
-                            end
-                        end
-                    end
-                    if storage.newrequests[surface.name][j] == nil then
-                        table.remove(storage.newrequests[surface.name], j)
-                    elseif storage.newrequests[surface.name][j] == {} then
-                        table.remove(storage.newrequests[surface.name], j)
-                    end
-                end
-            end
-        end
-        --[[ 		if storage.newrequests[surface.name] == nil then
-			table.remove(storage.newrequests,i)
-		elseif storage.newrequests[surface.name] == {} then
-			table.remove(storage.newrequests,i)
-		end ]]
-    end
-end
+--     for i, surface in pairs(game.surfaces) do
+--         if storage.newrequests[surface.name] ~= nil then
+--             if storage.newrequests[surface.name] ~= {} then
+--                 for j, backers in pairs(storage.newrequests[surface.name]) do
+--                     if backers ~= nil then
+--                         if backers ~= {} then
+--                             for k, pub in pairs(backers) do
+--                                 if backers[k] == nil then
+--                                     table.remove(storage.newrequests[surface.name][j], k)
+--                                 elseif backers[k] == {} then
+--                                     table.remove(storage.requests[surface.name][j], k)
+--                                 end
+--                             end
+--                         end
+--                     end
+--                     if storage.newrequests[surface.name][j] == nil then
+--                         table.remove(storage.newrequests[surface.name], j)
+--                     elseif storage.newrequests[surface.name][j] == {} then
+--                         table.remove(storage.newrequests[surface.name], j)
+--                     end
+--                 end
+--             end
+--         end
+--         --[[ 		if storage.newrequests[surface.name] == nil then
+-- 			table.remove(storage.newrequests,i)
+-- 		elseif storage.newrequests[surface.name] == {} then
+-- 			table.remove(storage.newrequests,i)
+-- 		end ]]
+--     end
+-- end
 
 function fix_ps_stations()
     local j = 1
@@ -3253,77 +3271,6 @@ script.on_event(defines.events.on_train_schedule_changed, on_train_schedule_chan
 script.on_event(defines.events.on_pre_entity_settings_pasted, on_pre_entity_settings_pasted)
 --script.on_event(defines.events.on_tick, on_tick)
 
-commands.add_command("CreateIndex", { "createindex_help" }, function(event)
-    storage.sub_index = {}
-    storage.subscriptions = storage.subscriptions or {}
-    -- storage.subscriptions now keyed by train
-    for i, subs in pairs(storage.subscriptions) do
-        if storage.sub_index[subs.backer_name] == nil then
-            --			storage.sub_index[subs.backer_name] = subs.train.id
-            storage.sub_index[subs.backer_name] = i
-            --	debugp(subs.backer_name .. " : " .. storage.sub_index[subs.backer_name])
-        end
-    end
-end)
-
-commands.add_command("trainInfo", { "trainInfo_help" }, function(event)
-    local trains = game.player.surface.get_trains()
-    storage.trains = {}
-    for i, train in pairs(trains) do
-        --	debugp(train.id)
-        storage.trains[train.id] = train
-    end
-end)
-
-commands.add_command("debug_on", { "trainInfo_help" }, function(event)
-    storage.db_on = true
-end)
-
-commands.add_command("debug_off", { "trainInfo_help" }, function(event)
-    storage.db_on = false
-end)
-
-commands.add_command("Get_requests_file", { "get requests file help" }, function(event)
-    helpers.write_file("requests_log", serpent.block(storage.newrequests), { comment = false })
-end)
-
-commands.add_command("Get_sub_index", { "get sub index help" }, function(event)
-    helpers.write_file("sub_index", serpent.block(storage.sub_index), { comment = false })
-end)
-
-commands.add_command("Get_trains", { "get trains help" }, function(event)
-    helpers.write_file("trains", serpent.block(storage.trains), { comment = false })
-    helpers.write_file("trains_res", serpent.block(storage.train_res), { comment = false })
-end)
-
-commands.add_command("Get_pslogs", { "get pslogs help" }, function(event)
-    helpers.write_file("trainpubs", serpent.block(storage.publishers), { comment = false })
-    helpers.write_file("trainnewpubs", serpent.block(storage.newpublishers), { comment = false })
-    helpers.write_file("trainreqs", serpent.block(storage.requests), { comment = false })
-    helpers.write_file("trainnewreqs", serpent.block(storage.newrequests), { comment = false })
-    helpers.write_file("trainpriorities", serpent.block(storage.priority), { comment = false })
-    helpers.write_file("trainnewpriorities", serpent.block(storage.newpriority), { comment = false })
-    helpers.write_file("counters", serpent.block(storage.newcounters), { comment = false })
-    --	helpers.write_file("subscriptions",serpent.block(storage.counters),{comment=false})
-end)
-
-
-commands.add_command("rebuild_trains", { "rebuild_trains_help" }, function(event)
-    local surface = nil
-    storage.trains = {}
-    for _, surface in pairs(game.surfaces) do
-        local trains = surface.get_trains()
-        for i, train in pairs(trains) do
-            --	debugp(train.id)
-            storage.trains[train.id] = train
-        end
-    end
-end)
-
-commands.add_command("Get_pubstops", { "get pubstops help" }, function(event)
-    helpers.write_file("pubstops", serpent.block(storage.pubstops), { comment = false })
-end)
-
 commands.add_command("Validate_index", { "validate index help" }, function(event)
     local train = nil
     for i, sub_i in pairs(storage.sub_index) do
@@ -3336,103 +3283,4 @@ commands.add_command("Validate_index", { "validate index help" }, function(event
             pop_sub_index(i, storage.sub_index[i])
         end
     end
-end)
-
-commands.add_command("fix_ps_stations", { "fix ps stations help" }, function(event)
-    local x = 0
-    x = fix_ps_stations()
-    if x ~= nil then
-        game.players[event.player_index].print(x .. " nil stations removed")
-    else
-        game.players[event.player_index].print("0 nil stations removed")
-    end
-end)
-
-commands.add_command("fix_raw_wood", { "fix raw wood help" }, function(event)
-    fix_raw_wood()
-    game.players[event.player_index].print("raw-wood instances have been corrected to wood")
-end)
-
-commands.add_command("reset", { "reset_help" }, function(event)
-    game.players[event.player_index].print("reset is redacted - use /tsm_reset")
-end)
-
-commands.add_command("tsm_reset", { "reset_help" }, function(event)
-    reset_requests()
-    reset_trains()
-end)
-
-commands.add_command(
-    "tsm_export",
-    "Export Supply Source Priorities",
-    function(event)
-        local player = game.players[event.player_index]
-        helpers.write_file("tsm_export.txt", game.encode_string(game.table_to_json(storage.newpriority)), false,
-            event.player_index)
-        player.print("Saved to script-output\tsm_export.txt")
-    end
-)
-
-commands.add_command(
-    "tsm_import",
-    "Import Supply Source Priorities",
-    function(event)
-        local player = game.players[event.player_index]
-        if player.admin then
-            if event.parameter and game.decode_string(event.parameter) then
-                local tmp_table = game.json_to_table(game.decode_string(event.parameter))
-                if type(tmp_table) == "table" then
-                    storage.newpriority = tmp_table
-                    player.print("Import Complete")
-                end
-            else
-                player.print("/tsm_import blueprint_string")
-            end
-        else
-            game.print(string.format("%s tried to import a TSM configuration as a non-admin", player.name))
-        end
-    end
-)
-
-commands.add_command(
-    "tsm_remove_dup_rq",
-    "Remove Duplicate Requesters",
-    function(event)
-        for i, pub in pairs(storage.newpublishers["nauvis"]) do
-            if tonumber(i) ~= nil then
-                game.print(i)
-                helpers.write_file("curr_pub", serpent.block(pub), { comment = false })
-                if pub == nil then
-                    game.print(i .. " removed")
-                    table.remove(storage.newpublishers["nauvis"], i)
-                elseif pub.backer_name == i then
-                    local entity = pub.entity
-                    game.print(pub.entity.unit_number)
-                    --	for j,kpub in pairs()
-                end
-            end
-        end
-    end
-)
-commands.add_command("tsm_garbage", { "reset_help" }, function(event)
-    --	for surface,publishers in pairs(storage.newpublishers) do
-    --		for backer_name,pubs in pairs(publishers) do
-    local surface = "nauvis"
-    local backer_name = "Charcoal Hydrogen Oxygen Load01"
-    game.print(table_size(storage.newpublishers[surface][backer_name]) .. #storage.newpublishers[surface][backer_name])
-    local i = 1
-    while i < #storage.newpublishers[surface][backer_name] do
-        --	for i,requester in pairs(storage.newpublishers[surface][backer_name]) do
-        game.print(surface .. backer_name .. i)
-        if requester == nil then
-            game.print("nil")
-            table.remove(storage.newpublishers[surface][backer_name], i)
-        else
-            i = i + 1
-        end
-    end
-    --end
-
-    --end
-    collectgarbage("collect")
 end)

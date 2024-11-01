@@ -176,8 +176,8 @@ function on_gui_checked_state_changed(event)
                 if storage.newrequests[surface][backer_name] ~= nil then
                     if storage.newrequests[surface][backer_name][key] ~= nil then
                         storage.newrequests[surface][backer_name][key].hide = storage.newpublishers[surface]
-                        [backer_name][
-                        key].hide
+                            [backer_name][
+                            key].hide
                     end
                 end
             end
@@ -634,7 +634,7 @@ end
 
 function reset_trains()
     for i, subs in pairs(storage.subscriptions) do
-        for _, station in pairs(game.get_train_stops({ name = i })) do
+        for _, station in pairs(game.train_manager.get_train_stops({ name = i })) do
             checkreq = false
             check_req(station, subs.train)
         end
