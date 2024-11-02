@@ -306,8 +306,7 @@ local function gui_open_pubtable(player, search)
     if search == nil then
         resource_search = heading.add { type = "choose-elem-button", name = "resource_search", elem_type = "signal" }
     else
-        resource_search = heading.add { type = "choose-elem-button", name = "resource_search", elem_type = "signal",
-            signal = search }
+        resource_search = heading.add { type = "choose-elem-button", name = "resource_search", elem_type = "signal", signal = search }
     end
     local scroll = frame.add { type = "scroll-pane", name = "scroll" }
     scroll.style.maximal_height = player.mod_settings["max-requester-height"].value
@@ -1798,149 +1797,149 @@ end
 
 function gui_open(player, controller, modgui)
     debugp(controller.name .. "in gui_open")
-    local status, err = pcall(function()
-        if controller.name == "train-publisher" then
-            --	local gui = mod_gui.get_frame_flow(player)
-            local gui
-            local frame
-            if not modgui then
-                gui = player.gui.relative
-                frame = gui.train_publisher
-                if frame then frame.destroy() end
-                frame = gui.add({
-                    type = "frame",
-                    name = "train_publisher",
-                    direction = "vertical",
-                    anchor = {
-                        gui = defines.relative_gui_type.lamp_gui,
-                        type = "lamp",
-                        position = defines.relative_gui_position.right
-                    }
-                })
-            else
-                gui = mod_gui.get_frame_flow(player)
-                frame = gui.train_publisher
-                if frame then frame.destroy() end
-                frame = gui.add({ type = "frame", name = "train_publisher", direction = "vertical" })
-            end
+    -- local status, err = pcall(function()
+    if controller.name == "train-publisher" then
+        --	local gui = mod_gui.get_frame_flow(player)
+        local gui
+        local frame
+        if not modgui then
+            gui = player.gui.relative
+            frame = gui.train_publisher
+            if frame then frame.destroy() end
+            frame = gui.add({
+                type = "frame",
+                name = "train_publisher",
+                direction = "vertical",
+                anchor = {
+                    gui = defines.relative_gui_type.lamp_gui,
+                    type = "lamp",
+                    position = defines.relative_gui_position.right
+                }
+            })
+        else
+            gui = mod_gui.get_frame_flow(player)
+            frame = gui.train_publisher
+            if frame then frame.destroy() end
+            frame = gui.add({ type = "frame", name = "train_publisher", direction = "vertical" })
+        end
 
-            frame.caption = { "train-controller.train-publisher-target" }
-            --	frame.add({ type = "label", name = "label", caption = {"train-controller.train-publisher-target"} })
-            if storage.newpublishers[controller.surface.name] == nil then
-                storage.newpublishers[controller.surface.name] = {}
-                storage.newpublishers[controller.surface.name][controller.backer_name] = {}
-                storage.newpublishers[controller.surface.name][controller.backer_name][1] = {}
-                storage.newpublishers[controller.surface.name][controller.backer_name][1].entity = controller
-            end
-            if storage.newpriority == nil then
-                storage.newpriority = {}
-                storage.newpriority[controller.surface.name] = {}
-            end
-            for keyi, publishers in pairs(storage.newpublishers[controller.surface.name]) do
-                for key, publisher in pairs(publishers) do
-                    if publisher.entity == controller then
-                        local pri_det = frame.add({
-                            type = "table",
-                            name = "priority_det",
-                            column_count = 3,
-                            direction = "horizontal"
-                        })
+        frame.caption = { "train-controller.train-publisher-target" }
+        --	frame.add({ type = "label", name = "label", caption = {"train-controller.train-publisher-target"} })
+        if storage.newpublishers[controller.surface.name] == nil then
+            storage.newpublishers[controller.surface.name] = {}
+            storage.newpublishers[controller.surface.name][controller.backer_name] = {}
+            storage.newpublishers[controller.surface.name][controller.backer_name][1] = {}
+            storage.newpublishers[controller.surface.name][controller.backer_name][1].entity = controller
+        end
+        if storage.newpriority == nil then
+            storage.newpriority = {}
+            storage.newpriority[controller.surface.name] = {}
+        end
+        for keyi, publishers in pairs(storage.newpublishers[controller.surface.name]) do
+            for key, publisher in pairs(publishers) do
+                if publisher.entity == controller then
+                    local pri_det = frame.add({
+                        type = "table",
+                        name = "priority_det",
+                        column_count = 3,
+                        direction = "horizontal"
+                    })
 
-                        storage.cur_publisher = storage.cur_publisher or {}
-                        --	storage.cur_publisher[player.index] = i
-                        storage.cur_publisher[player.index] = storage.cur_publisher[player.index] or {}
-                        storage.cur_publisher[player.index].surface = controller.surface.name
-                        storage.cur_publisher[player.index].backer_name = publisher.backer_name
-                        storage.cur_publisher[player.index].key = key
-                        storage.cur_publisher[player.index] = storage.cur_publisher[player.index] or {}
-                        if publisher.priority.resource ~= nil and publisher.priority.resource ~= {} then
-                            pri_det.add { type = "choose-elem-button", name = "Res_Schema", elem_type = "signal",
-                                signal = {
-                                    name = publisher.priority.resource.name
-                                } }
-                        else
-                            pri_det.add { type = "choose-elem-button", name = "Res_Schema", elem_type = "signal" }
+                    storage.cur_publisher = storage.cur_publisher or {}
+                    --	storage.cur_publisher[player.index] = i
+                    storage.cur_publisher[player.index] = storage.cur_publisher[player.index] or {}
+                    storage.cur_publisher[player.index].surface = controller.surface.name
+                    storage.cur_publisher[player.index].backer_name = publisher.backer_name
+                    storage.cur_publisher[player.index].key = key
+                    storage.cur_publisher[player.index] = storage.cur_publisher[player.index] or {}
+                    if publisher.priority.resource ~= nil and publisher.priority.resource ~= {} then
+                        pri_det.add { type = "choose-elem-button", name = "Res_Schema", elem_type = "signal",
+                            signal = {
+                                name = publisher.priority.resource.name
+                            } }
+                    else
+                        pri_det.add { type = "choose-elem-button", name = "Res_Schema", elem_type = "signal" }
+                    end
+                    if publisher.priority.id ~= nil and publisher.priority.id ~= {} then
+                        pri_det.add { type = "choose-elem-button", name = "Schema", elem_type = "signal", signal = { name = publisher.priority.id.name, type = publisher.priority.id.type } }
+                    else
+                        pri_det.add { type = "choose-elem-button", name = "Schema", elem_type = "signal" }
+                    end
+                    pri_det.add { type = "button", name = "copy_button", caption = { "train-controller.c" },
+                        style = "PubSub_edit_button_style" }
+                    local pass = true
+                    if (publisher.priority.resource == nil) or (publisher.priority.id == nil) then
+                        pass = false
+                    elseif (publisher.priority.resource == {}) or (publisher.priority.id == {}) then
+                        pass = false
+                    elseif (publisher.priority.resource.name == nil) or (publisher.priority.id.name == nil) then
+                        pass = false
+                    elseif (storage.newpriority[controller.surface.name][publisher.priority.resource.name] == nil) then
+                        pass = false
+                    elseif storage.newpriority[controller.surface.name][publisher.priority.resource.name][
+                        publisher.priority.id.name] == nil then
+                        pass = false
+                    end
+                    if pass == true then
+                        local priority = table.deepcopy(storage.newpriority[controller.surface.name][
+                        publisher.priority.resource.name][publisher.priority.id.name])
+                        if frame.StationList then
+                            frame.StationList.destroy()
                         end
-                        if publisher.priority.id ~= nil and publisher.priority.id ~= {} then
-                            pri_det.add { type = "choose-elem-button", name = "Schema", elem_type = "signal",
-                                signal = { name = publisher.priority.id.name } }
-                        else
-                            pri_det.add { type = "choose-elem-button", name = "Schema", elem_type = "signal" }
+                        frame.add { type = "label", name = "StationList", caption = stationlist(priority) }
+                        -- process priority
+                        local proc_priority = "1"
+                        if publisher.proc_priority then
+                            proc_priority = publisher.proc_priority
                         end
-                        pri_det.add { type = "button", name = "copy_button", caption = { "train-controller.c" },
-                            style = "PubSub_edit_button_style" }
-                        local pass = true
-                        if (publisher.priority.resource == nil) or (publisher.priority.id == nil) then
-                            pass = false
-                        elseif (publisher.priority.resource == {}) or (publisher.priority.id == {}) then
-                            pass = false
-                        elseif (publisher.priority.resource.name == nil) or (publisher.priority.id.name == nil) then
-                            pass = false
-                        elseif (storage.newpriority[controller.surface.name][publisher.priority.resource.name] == nil) then
-                            pass = false
-                        elseif storage.newpriority[controller.surface.name][publisher.priority.resource.name][
-                            publisher.priority.id.name] == nil then
-                            pass = false
+                        local proc_table = frame.add { type = "table", name = "proc_table", column_count = 2,
+                            style = "PubSub_table_style" }
+                        proc_table.add { type = "label", name = "proclab",
+                            caption = { "train-controller.process-priority" } }
+                        local process = proc_table.add { type = "textfield", name = "process_priority",
+                            text = proc_priority }
+                        process.style.maximal_width = 40
+                        local hide = false
+                        if publisher.hide ~= nil then
+                            hide = publisher.hide
                         end
-                        if pass == true then
-                            local priority = table.deepcopy(storage.newpriority[controller.surface.name][
-                            publisher.priority.resource.name][publisher.priority.id.name])
-                            if frame.StationList then
-                                frame.StationList.destroy()
-                            end
-                            frame.add { type = "label", name = "StationList", caption = stationlist(priority) }
-                            -- process priority
-                            local proc_priority = "1"
-                            if publisher.proc_priority then
-                                proc_priority = publisher.proc_priority
-                            end
-                            local proc_table = frame.add { type = "table", name = "proc_table", column_count = 2,
-                                style = "PubSub_table_style" }
-                            proc_table.add { type = "label", name = "proclab",
-                                caption = { "train-controller.process-priority" } }
-                            local process = proc_table.add { type = "textfield", name = "process_priority",
-                                text = proc_priority }
-                            process.style.maximal_width = 40
-                            local hide = false
-                            if publisher.hide ~= nil then
-                                hide = publisher.hide
-                            end
-                            frame.add { type = "checkbox", name = "hide", caption = { "requester.hide" }, state = hide,
-                                tooltip = { "requester.hide_tooltip" } }
-                            frame.add { type = "label", name = "backer_name", caption = keyi }
-                            return
-                        else
-                            if frame.StationList then
-                                frame.StationList.destroy()
-                            end
-                            frame.add { type = "label", name = "StationList",
-                                caption = { "train-controller.not-defined" } }
-                            -- process priority
-                            local proc_priority = "1"
-                            if publisher.proc_priority then
-                                proc_priority = publisher.proc_priority
-                            end
-                            local proc_table = frame.add { type = "table", name = "proc_table", column_count = 2,
-                                style = "PubSub_table_style" }
-                            local proclab = proc_table.add { type = "label", name = "proclab",
-                                caption = { "train-controller.process-priority" } }
-                            local process = proc_table.add { type = "textfield", name = "process_priority",
-                                text = proc_priority }
-                            process.style.maximal_width = 40
-                            frame.add { type = "label", name = "backer_name", caption = keyi }
-                            return
+                        frame.add { type = "checkbox", name = "hide", caption = { "requester.hide" }, state = hide,
+                            tooltip = { "requester.hide_tooltip" } }
+                        frame.add { type = "label", name = "backer_name", caption = keyi }
+                        return
+                    else
+                        if frame.StationList then
+                            frame.StationList.destroy()
                         end
+                        frame.add { type = "label", name = "StationList",
+                            caption = { "train-controller.not-defined" } }
+                        -- process priority
+                        local proc_priority = "1"
+                        if publisher.proc_priority then
+                            proc_priority = publisher.proc_priority
+                        end
+                        local proc_table = frame.add { type = "table", name = "proc_table", column_count = 2,
+                            style = "PubSub_table_style" }
+                        local proclab = proc_table.add { type = "label", name = "proclab",
+                            caption = { "train-controller.process-priority" } }
+                        local process = proc_table.add { type = "textfield", name = "process_priority",
+                            text = proc_priority }
+                        process.style.maximal_width = 40
+                        frame.add { type = "label", name = "backer_name", caption = keyi }
+                        return
                     end
                 end
             end
-            --	frame.add{type = "choose-elem-button", name = "Schema", elem_type = "signal"}
         end
-    end)
-    if not status then
-        for _, players in pairs(game.players) do
-            players.print(err)
-        end
+        --	frame.add{type = "choose-elem-button", name = "Schema", elem_type = "signal"}
     end
+    -- end
+    -- )
+    -- if not status then
+    --     for _, players in pairs(game.players) do
+    --         players.print(err)
+    --     end
+    -- end
 end
 
 function gui_close(player, controller)
