@@ -1853,10 +1853,7 @@ function gui_open(player, controller, modgui)
                     storage.cur_publisher[player.index].key = key
                     storage.cur_publisher[player.index] = storage.cur_publisher[player.index] or {}
                     if publisher.priority.resource ~= nil and publisher.priority.resource ~= {} then
-                        pri_det.add { type = "choose-elem-button", name = "Res_Schema", elem_type = "signal",
-                            signal = {
-                                name = publisher.priority.resource.name
-                            } }
+                        pri_det.add { type = "choose-elem-button", name = "Res_Schema", elem_type = "signal", signal = { name = publisher.priority.resource.name, type = publisher.priority.resource.type } }
                     else
                         pri_det.add { type = "choose-elem-button", name = "Res_Schema", elem_type = "signal" }
                     end

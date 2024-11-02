@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.5
+Date: 2024/11/02
+  Uploaded By:
+    - billbo99
+  Bugfixes:
+    - Didnt think to test virtual signals being used as resource signals.
+---------------------------------------------------------------------------------------------------
 Version: 2.0.4
 Date: 2024/11/02
   Uploaded By:
