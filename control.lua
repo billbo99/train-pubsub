@@ -1984,6 +1984,40 @@ function upd_counters()
 	end ]]
 end
 
+local function look_for_trains_at_suppliers(station)
+    for _, train in pairs(storage.trains) do
+        if train and train.valid and train.station and train.station.backer_name == station then
+            if train.station.name == "subscriber-train-stop" then
+                if storage.subscriptions[train.id] == nil then
+                    log("train missing from subscriptions")
+                    push_sub_index(train.station, train)
+                    check_req(train.station, train)
+                end
+            end
+        end
+    end
+end
+
+local function update_suppliers()
+    if storage.newpriority then
+        for surface, surface_dict in pairs(storage.newpriority) do
+            -- log('update_suppliers : surface=' .. surface)
+            for resource, resource_dict in pairs(surface_dict) do
+                -- log('update_suppliers : resource=' .. resource)
+                for priority, priority_dict in pairs(resource_dict) do
+                    -- log('update_suppliers : priority=' .. priority)
+                    for station_idx, station_list in pairs(priority_dict.station) do
+                        -- log('update_suppliers : station_idx=' .. station_idx)
+                        if station_list and #station_list == 2 then
+                            look_for_trains_at_suppliers(station_list[2])
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
 function upd_publishers()
     local tick = game.tick
 
@@ -2111,6 +2145,7 @@ function nth_tick()
         --	script.on_nth_tick(11, pub_open )
     end
     script.on_nth_tick(settings.global['ticks-per-cycle'].value, upd_publishers)
+    script.on_nth_tick(settings.global['ticks-per-cycle'].value * 10, update_suppliers)
 end
 
 function addPSToTable(entity, player_index, event)
@@ -3052,8 +3087,7 @@ end
 local function on_train_schedule_changed(event)
     local train = event.train
     local schedule = train.schedule
-    local player = event.player_index
-    if schedule ~= nil then
+    if schedule ~= nil and schedule.current then
         local surface = train.get_rail_end(defines.rail_direction.front).rail.surface.name
         local station_name = schedule.records[schedule.current].station
         if station_name ~= nil then
@@ -3062,30 +3096,12 @@ local function on_train_schedule_changed(event)
                     if storage.newcounters[surface] ~= nil then
                         for _, counter in pairs(storage.newcounters[surface]) do
                             if counter.station == station then
-                                --	game.print("event updating counter for " .. counter.backer_name)
                                 updateCounters(counter)
                             end
                         end
                     end
                 end
             end
-            -- if you removed a requester from schedule then check player record
-            --[[
-			if player ~= nil then
-				game.print("player" .. player)
-				game.print(train.id .. storage.player[player].entity.train.id)
-				if storage.player[player].entity.train == train then
-					if storage.player[player].destination ~= nil then
-						game.print(destination.backer_name)
-						for _,counter in pairs(storage.newcounters[surface]) do
-							if counter.station == destination then
-							 	game.print("event updating counter for " .. counter.backer_name)
-								updateCounters(counter)
-							end
-						end
-					end
-				end
-			end	 ]]
         end
     end
 end

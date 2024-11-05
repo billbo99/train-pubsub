@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.6
+Date: 2024/11/05
+  Uploaded By:
+    - billbo99
+  Bugfixes:
+    - train-pubsub/control.lua:3058: attempt to index field '?' (a nil value)
+  Changes:
+    - Added some logic to check for trains stuck at supply stations doing nothing.
+---------------------------------------------------------------------------------------------------
 Version: 2.0.5
 Date: 2024/11/02
   Uploaded By:

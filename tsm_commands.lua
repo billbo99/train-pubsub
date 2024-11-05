@@ -49,6 +49,10 @@ commands.add_command("Get_trains", { "get trains help" }, function(event)
     game.players[event.player_index].print("trains_res.json saved")
 end)
 
+commands.add_command("TSM_Dump_Storage", { "" }, function(event)
+    helpers.write_file("tsm_storage.json", serpent.block(storage), false, event.player_index)
+end)
+
 commands.add_command("Get_pslogs", { "get pslogs help" }, function(event)
     helpers.write_file("trainpubs.json", serpent.block(storage.publishers), false, event.player_index)
     helpers.write_file("trainnewpubs.json", serpent.block(storage.newpublishers), false, event.player_index)
