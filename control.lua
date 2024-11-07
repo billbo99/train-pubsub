@@ -1967,21 +1967,11 @@ function gui_close_any(player)
     end
 end
 
+-- this looks for new counters and fixes their properies
 function upd_counters()
     if storage.pending_req then
         pending_req()
     end
-    --[[ 	if storage.counters then
-		--helpers.write_file("pobsub_counters",serpent.block(storage.counters))
-		for i, counter in pairs(storage.counters) do
-			--debugp("counter " .. counter.backer_name)
-			if counter.station.valid == true then
-				updateCounters(counter, 2)
-			else
-				storage.counters[i] = nil
-			end
-		end
-	end ]]
 end
 
 local function look_for_trains_at_suppliers(station)
@@ -2021,7 +2011,7 @@ end
 function upd_publishers()
     local tick = game.tick
 
-    local update = ""
+    local update = false
 
     if storage.newpublishers then
         for _, surface in pairs(game.surfaces) do
@@ -2033,10 +2023,7 @@ function upd_publishers()
                                 publisher.tick = publisher.tick or 0
                                 if publisher.tick < tick then
                                     update = updatePublishers(publisher, keyx, x)
-
-                                    --	if updatePublishers(publisher, keyx, x) == true then return end
                                     if update == true then
-                                        --	log(tick .. keyx .. tostring(update))
                                         return
                                     end
                                 end
@@ -2763,14 +2750,11 @@ local function match_req(publisher, backer_name, x)
                         else
                             if counter.entity.valid == true then
                                 local do_delete = true
-                                for _, stationx in pairs(counter.entity.surface.find_entities_filtered { area = {
-                                    {
-                                        x = counter
-                                            .entity.position.x - 2,
-                                        y = counter.entity.position.y - 2
-                                    },
-                                    { x = counter.entity.position.x + 2, y = counter.entity.position.y + 2 } },
-                                    type = "train-stop", name = "publisher-train-stop" }) do
+                                local area = {
+                                    { x = counter.entity.position.x - 2, y = counter.entity.position.y - 2 },
+                                    { x = counter.entity.position.x + 2, y = counter.entity.position.y + 2 },
+                                }
+                                for _, stationx in pairs(counter.entity.surface.find_entities_filtered { area = area, type = "train-stop", name = "publisher-train-stop" }) do
                                     counter.station = stationx
                                     game.print(counter.station.backer_name .. " is repaired")
                                     localstop = counter.station
@@ -2855,6 +2839,7 @@ function updaterequestedpublisher(resource, id, surface, x)
     end
 end
 
+---@return boolean
 function updatePublishers(publisher, backer_name, x)
     local surface = publisher.entity.surface.name
     if backer_name == nil or backer_name == "" or backer_name == " " then return end
@@ -2862,18 +2847,16 @@ function updatePublishers(publisher, backer_name, x)
         return false
     end
 
+    -- if the light has a request, validate its definition
     if publisher.request then
         if storage.newrequests[surface][backer_name] ~= nil then -- Experimental
             for _, request in pairs(storage.newrequests[surface][backer_name]) do
-                if publisher.priority.resource.name == request.priority.resource.name and
-                    publisher.priority.id.name == request.priority.id.name then
+                if publisher.priority.resource.name == request.priority.resource.name and publisher.priority.id.name == request.priority.id.name then
                     return false
                 end
             end
             log("Revoking false Existing request " .. publisher.backer_name .. " " .. publisher.priority.resource.name)
             publisher.request = false -- Experimental
-
-
             --	return false
         else                          -- Experimental
             log("Revoking false Existing request " .. publisher.backer_name)
@@ -2881,8 +2864,7 @@ function updatePublishers(publisher, backer_name, x)
         end                           -- Experimental
     end
 
-    --	if not publisher.enabled then
-    -- 	game.print(backer_name)
+    -- 	The light as no request
     if not publisher.priority then return false end
     if not publisher.priority.resource then return false end
     if not publisher.priority.resource.name then return false end
@@ -2892,10 +2874,14 @@ function updatePublishers(publisher, backer_name, x)
     if storage.newpriority[surface] == nil then return false end
     if storage.newpriority[surface][publisher.priority.resource.name] == nil then return false end
     if storage.newpriority[surface][publisher.priority.resource.name][publisher.priority.id.name] == nil then return false end
-    --    game.print("pub name is " .. backer_name)
+
+    -- lazy use of global
     matchreq = false
+
+    -- ?
     match_req(publisher, backer_name, x)
-    -- 	debugp(matchreq)
+
+    -- ?
     if matchreq == false and tostring(publisher.entity.unit_number) ~= tostring(backer_name) then
         -- append a requestor record
         storage.newrequests = storage.newrequests or {}
@@ -3064,24 +3050,16 @@ function updateCounters(counter, dbp)
         -- end
 
         if traincount > 0 then
-            cb.get_section(1).set_slot(1,
-                { value = { type = "virtual", name = "train-counter", quality = "normal" }, min = traincount })
+            local slot_filter = { value = { type = "virtual", name = "train-counter", quality = "normal" }, min = traincount }
+            cb.get_section(1).set_slot(1, slot_filter)
         end
         i = 2
         for key, resource in pairs(res_count) do
-            cb.get_section(1).set_slot(i,
-                { value = { type = resource.type, name = key, quality = "normal" }, min = resource.count })
+            local slot_filter = { value = { type = resource.type, name = key, quality = "normal" }, min = resource.count }
+            cb.get_section(1).set_slot(i, slot_filter)
             i = i + 1
         end
     end
-    -- end
-    -- )
-    --     if not status then
-    --         for _, players in pairs(game.players) do
-    --             players.print(err)
-    --         end
-    --         return
-    --     end
 end
 
 local function on_train_schedule_changed(event)
@@ -3089,14 +3067,16 @@ local function on_train_schedule_changed(event)
     local schedule = train.schedule
     if schedule ~= nil and schedule.current then
         local surface = train.get_rail_end(defines.rail_direction.front).rail.surface.name
-        local station_name = schedule.records[schedule.current].station
-        if station_name ~= nil then
-            for _, station in pairs(game.train_manager.get_train_stops({ station_name = station_name, surface = surface })) do
-                if station.name == "publisher-train-stop" then
-                    if storage.newcounters[surface] ~= nil then
-                        for _, counter in pairs(storage.newcounters[surface]) do
-                            if counter.station == station then
-                                updateCounters(counter)
+        if schedule.records[schedule.current] and schedule.records[schedule.current].station then
+            local station_name = schedule.records[schedule.current].station
+            if station_name ~= nil then
+                for _, station in pairs(game.train_manager.get_train_stops({ station_name = station_name, surface = surface })) do
+                    if station.name == "publisher-train-stop" then
+                        if storage.newcounters[surface] ~= nil then
+                            for _, counter in pairs(storage.newcounters[surface]) do
+                                if counter.station == station then
+                                    updateCounters(counter)
+                                end
                             end
                         end
                     end

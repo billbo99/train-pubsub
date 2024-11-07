@@ -538,6 +538,7 @@ function spairs(t, order)
     end
 end
 
+-- this looks for new counters and fixes their properies
 function pending_req()
     storage.pending_req = storage.pending_req or {}
     for i, pending in ipairs(storage.pending_req) do
@@ -552,21 +553,6 @@ function pending_req()
     end
 end
 
---[[ function fix_raw_wood()
-	for _,priority in pairs(storage.priority) do
-		if priority.id.name == 'raw-wood' then
-			priority.id.name = 'wood'
-		end
-		if priority.resource.name == 'raw-wood' then
-			priority.resource.name = 'wood'
-		end
-	end
-	for _,publisher in pairs(storage.publishers) do
-		if publisher.priority.name == 'raw-wood' then
-			publisher.priority.name = 'wood'
-		end
-	end
-end ]]
 function on_pre_entity_settings_pasted(event)
     local player = game.players[event.player_index]
     local source = {}
@@ -586,20 +572,16 @@ function on_pre_entity_settings_pasted(event)
             end
         end
         local status, err = pcall(function()
+            local surface_name = player.surface.name
+            local dst_name = destination.backer_name
+            local src_name = source.backer_name
             if source ~= {} and destination ~= {} then
-                storage.newpublishers[player.surface.name][destination.backer_name][destination.i] = table.deepcopy(
-                    global
-                    .newpublishers[player.surface.name][source.backer_name][source.i])
-                storage.newpublishers[player.surface.name][destination.backer_name][destination.i].backer_name =
-                    destination
-                    .backer_name
-                storage.newpublishers[player.surface.name][destination.backer_name][destination.i].entity = event
-                    .destination
+                storage.newpublishers[surface_name][dst_name][destination.i] = table.deepcopy(storage.newpublishers[surface_name][src_name][source.i])
+                storage.newpublishers[player.surface.name][destination.backer_name][destination.i].backer_name = destination.backer_name
+                storage.newpublishers[player.surface.name][destination.backer_name][destination.i].entity = event.destination
                 storage.newpublishers[player.surface.name][destination.backer_name][destination.i].request = false
                 if storage.newpublishers[player.surface.name][source.backer_name][source.i].proc_priority ~= nil then
-                    storage.newpublishers[player.surface.name][destination.backer_name][destination.i].proc_priority =
-                        global
-                        .newpublishers[player.surface.name][source.backer_name][source.i].proc_priority
+                    storage.newpublishers[player.surface.name][destination.backer_name][destination.i].proc_priority = storage.newpublishers[player.surface.name][source.backer_name][source.i].proc_priority
                 else
                     storage.newpublishers[player.surface.name][destination.backer_name][destination.i].proc_priority = 50
                 end
