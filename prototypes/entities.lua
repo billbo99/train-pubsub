@@ -295,44 +295,21 @@ supply.animations = make_4way_animation_from_spritesheet({
     layers =
     {
         {
-            filename = "__train-pubsub__/graphics/train-stop/train-stop-bottom-sub.png",
-            --    line_length = 4,
-            width = 71,
-            height = 146,
+            filename = "__train-pubsub__/graphics/train-stop/hr-train-stop-bottom-sub.png",
+            width = 140,
+            height = 291,
             direction_count = 4,
-            shift = util.by_pixel(-0.5, -27),
-            hr_version =
-            {
-                filename = "__train-pubsub__/graphics/train-stop/hr-train-stop-bottom-sub.png",
-                --        line_length = 4,
-                width = 140,
-                height = 291,
-                direction_count = 4,
-                shift = util.by_pixel(-0.5, -26.75),
-                scale = 0.5
-            }
+            shift = util.by_pixel(-0.5, -26.75),
+            scale = 0.5
         },
         {
             filename = "__base__/graphics/entity/train-stop/train-stop-shadow.png",
-            --    filename = "__train-pubsub__/graphics/train-stop/train-stop-shadow.png",
-            --    line_length = 4,
-            width = 361,
-            height = 304,
+            width = 526,
+            height = 370,
+            shift = util.by_pixel(41.5, 11.0),
             direction_count = 4,
-            shift = util.by_pixel(-7.5, 18),
             draw_as_shadow = true,
-            hr_version =
-            {
-                filename = "__base__/graphics/entity/train-stop/hr-train-stop-shadow.png",
-                --       filename = "__train-pubsub__/graphics/train-stop/hr-train-stop-shadow.png",
-                --       line_length = 4,
-                width = 720,
-                height = 607,
-                direction_count = 4,
-                shift = util.by_pixel(-7.5, 17.75),
-                draw_as_shadow = true,
-                scale = 0.5
-            }
+            scale = 0.5
         }
     }
 })
@@ -347,44 +324,22 @@ publish.animations = make_4way_animation_from_spritesheet({
     layers =
     {
         {
-            filename = "__train-pubsub__/graphics/train-stop/train-stop-bottom-req.png",
-            --    line_length = 4,
-            width = 71,
-            height = 146,
+            filename = "__train-pubsub__/graphics/train-stop/hr-train-stop-bottom-req.png",
+            --        line_length = 4,
+            width = 140,
+            height = 291,
             direction_count = 4,
-            shift = util.by_pixel(-0.5, -27),
-            hr_version =
-            {
-                filename = "__train-pubsub__/graphics/train-stop/hr-train-stop-bottom-req.png",
-                --        line_length = 4,
-                width = 140,
-                height = 291,
-                direction_count = 4,
-                shift = util.by_pixel(-0.5, -26.75),
-                scale = 0.5
-            }
+            shift = util.by_pixel(-0.5, -26.75),
+            scale = 0.5
         },
         {
             filename = "__base__/graphics/entity/train-stop/train-stop-shadow.png",
-            --    filename = "__train-pubsub__/graphics/train-stop/train-stop-shadow.png",
-            --    line_length = 4,
-            width = 361,
-            height = 304,
+            width = 526,
+            height = 370,
+            shift = util.by_pixel(41.5, 11.0),
             direction_count = 4,
-            shift = util.by_pixel(-7.5, 18),
             draw_as_shadow = true,
-            hr_version =
-            {
-                filename = "__base__/graphics/entity/train-stop/hr-train-stop-shadow.png",
-                --       filename = "__train-pubsub__/graphics/train-stop/hr-train-stop-shadow.png",
-                --       line_length = 4,
-                width = 720,
-                height = 607,
-                direction_count = 4,
-                shift = util.by_pixel(-7.5, 17.75),
-                draw_as_shadow = true,
-                scale = 0.5
-            }
+            scale = 0.5
         }
     }
 })

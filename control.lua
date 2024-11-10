@@ -641,7 +641,7 @@ function gui_open_station_frame(player, mode)
     local resource_search2 = gui.pri_frame.heading.resource_search2.elem_value
     local dd_list = storage.player[player.index].list
     if resource_search2 ~= nil then
-        local el_type = resource_search2.type
+        local el_type = resource_search2.type or "item"
         local el_name = resource_search2.name
         dd_list = {}
         for k, v in ipairs(storage.player[player.index].list) do
@@ -684,8 +684,7 @@ local function gui_open_pri_frame(player, search)
     if search == nil then
         resource_search = heading.add { type = "choose-elem-button", name = "resource_search2", elem_type = "signal" }
     else
-        resource_search = heading.add { type = "choose-elem-button", name = "resource_search2", elem_type = "signal",
-            signal = search }
+        resource_search = heading.add { type = "choose-elem-button", name = "resource_search2", elem_type = "signal", signal = search }
     end
     local scroll = frame.add { type = "scroll-pane", name = "scroll" }
     scroll.style.maximal_height = player.mod_settings["max-priority-height"].value
